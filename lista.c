@@ -5,7 +5,6 @@
 #include"lista.h"
 
 #define NULO -1
-#define LIVRE -2
 
 bool emptyList(Lista);
 
@@ -52,7 +51,6 @@ void insertItem(Lista lis, void* infor, size_t tamanho){
         if(!emptyList(li))
             li->elem[li->ult].prox = livre;
         li->ult = livre;
-        //printf("(Elemento inserido em %d)@@ant: %d  @@  prox: %d\n", livre, li->elem[livre].ant, li->elem[livre].prox);
     }
 }
 
@@ -91,10 +89,7 @@ void removeItem(Lista lis, int i){
             else{
                 li->elem[index].ant = NULO;
             }
-            //printf("ITEM %d REMOVIDO COM SUCESSO - NOVO LIVRE: %d\n", index, li->livre);
-            //printf("++primeiro: %d++\n", li->prim);
         }
-        //else printf("--ITEM %d NAO EXISTE--\n", i);
     }
 }
 
@@ -109,17 +104,12 @@ bool fullList(Lista lis){
     struct ListaImplementada *li = lis;
     int index = li->prim;
     int j;
-    //printf("---------------------------------------------\n");
     for(j=0;j<li->max;j++){
         index = li->elem[index].prox;
-        //printf("%d\n\n", index);
         if(!li->elem[index].info)
             break;
     }
-    //printf("---------------------------------------------\n");
-    //printf("j: %d || max: %d", j, li->max);
     if(j >= li->max){
-        //printf("LISTACHEIACARALHO¨¨¨¨¨¨¨&¨¨\n");
         return true;
     }
     else
@@ -132,10 +122,6 @@ bool emptyList(Lista lis){
         return true;
     else
         return false;
-}
-
-void insertBefore(Lista lis, void* infor, size_t tamanho, int i){
-    struct ListaImplementada *li = lis;
 }
 
 Item getItem(Lista lis, int i){
@@ -151,8 +137,6 @@ Item getItem(Lista lis, int i){
 
     if(i <= li->max && index != NULO){
         if(li->elem[index].info){
-            //printf("---%d---", index);
-            //printf("\nant: %d\nprox: %d", li->elem[index].ant, li->elem[index].prox);
             return li->elem[index].info;
         }
     }

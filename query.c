@@ -6,6 +6,19 @@
 #include"svg.h"
 #include"formas.h"
 
+float func_min(float a, float b){
+  if(a>b)
+    return b;
+  else
+    return a;
+}
+float func_max(float a, float b){
+  if(a>b)
+    return a;
+  else
+    return b;
+}
+
 void qry_bb(char dDir[], Elemento *iElem, int size, char cor[], char sufixo[], char tnArq[], char nConsulta[]){
   Elemento *aux;
   FILE* bbOut;
