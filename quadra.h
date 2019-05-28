@@ -3,8 +3,8 @@
 
 typedef void* ItemQuadra;
 
-ItemQuadra quadraNew(float, float, float, float, char[]); /*Parametros: coordenadas x e y da quadra, largura, altura e CEP
-                                                          Retorno: void* que aponta para uma struct quadra com as especificacoes acima*/
+ItemQuadra quadraNew(float, float, float, float, char[], int*); /*Parametros: coordenadas x e y da quadra, largura, altura e CEP
+                                                                Retorno: void* que aponta para uma struct quadra com as especificacoes acima*/
 
 void quadraDraw(ItemQuadra, FILE*);                        //Desenha no svg (FILE*) o ItemQuadra desejado
 

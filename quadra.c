@@ -17,7 +17,7 @@ static char cor1[22] = "magenta";
 static char cor2[22] = "black";
 static float stroke = 1.0;
 
-ItemQuadra quadraNew(float x, float y, float w, float h, char cep[]){
+ItemQuadra quadraNew(float x, float y, float w, float h, char cep[], int* sizeofItem){
   struct quadra *essa = malloc(sizeof(struct quadra));
   strcpy(essa->cep, cep);
   essa->x = x;
@@ -27,6 +27,7 @@ ItemQuadra quadraNew(float x, float y, float w, float h, char cep[]){
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
   essa->strkW = stroke;
+  sizeofItem = sizeof(struct quadra);
 
   return essa;
 }

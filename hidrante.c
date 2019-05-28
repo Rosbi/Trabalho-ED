@@ -16,7 +16,7 @@ static char cor2[22] = "black";
 static float stroke = 1.0;
 static float radius = 5.0;
 
-ItemHidrante hidranteNew(char id[], float x, float y){
+ItemHidrante hidranteNew(char id[], float x, float y, int* siofItem){
   struct hidrante *essa = malloc(sizeof(struct hidrante));
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
@@ -24,6 +24,7 @@ ItemHidrante hidranteNew(char id[], float x, float y){
   essa->strkW = stroke;
   essa->x = x;
   essa->y = y;
+  sizeofItem = sizeof(struct hidrante);
 
   return essa;
 }

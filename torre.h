@@ -3,7 +3,7 @@
 
 typedef void* ItemTorre;
 
-ItemTorre torreNew(char[], float, float);
+ItemTorre torreNew(char[], float, float, int*);
 
 void torreDraw(ItemTorre, FILE*);
 

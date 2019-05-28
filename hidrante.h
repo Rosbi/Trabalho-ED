@@ -3,7 +3,7 @@
 
 typedef void* ItemHidrante;
 
-ItemHidrante hidranteNew(char[], float, float);
+ItemHidrante hidranteNew(char[], float, float, int*);
 
 void hidranteDraw(ItemHidrante, FILE*);
 

@@ -16,7 +16,7 @@ static char cor2[22] = "black";
 static float stroke = 1.0;
 static float radius = 5.0;
 
-ItemTorre torreNew(char id[], float x, float y){
+ItemTorre torreNew(char id[], float x, float y, int* sizeofItem){
   struct torre *essa = malloc(sizeof(struct torre));
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
@@ -24,6 +24,7 @@ ItemTorre torreNew(char id[], float x, float y){
   essa->strkW = stroke;
   essa->x = x;
   essa->y = y;
+  sizeofItem = sizeof(struct torre);
 
   return essa;
 }

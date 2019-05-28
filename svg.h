@@ -1,12 +1,10 @@
 #ifndef SVG_H
 #define SVG_H
-#include"formas.h"
+#include"lista.h"
 
-Elemento *novo_elem(FILE* geo, FILE* out, char tipo, Elemento *elem);
+void inicializarListas(char*, int[], Lista[]);)
 
-Elemento *create_base_svg(char *nArqGeo, char *dDir, int *size);
-
-void draw_svg(Elemento *elem, FILE* out, char tipo);
+void draw_svg(Lista[], char[]);
 
 Elemento *novo_elem(FILE* geo, FILE* out, char tipo, Elemento *elem);
 

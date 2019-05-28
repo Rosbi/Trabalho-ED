@@ -4,7 +4,8 @@
 #include<math.h>
 #include<stdbool.h>
 #include"svg.h"
-#include"formas.h"
+#include"formasBase.h"
+#include"lista.h"
 
 float func_min(float a, float b){
   if(a>b)
@@ -19,11 +20,89 @@ float func_max(float a, float b){
     return b;
 }
 
-void qry_bb(char dDir[], Elemento *iElem, int size, char cor[], char sufixo[], char tnArq[], char nConsulta[]){
-  Elemento *aux;
+void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], Lista listasObjetos[]){
+  char* querryIn = NULL;  //nome do arquivo de entrada de dados
+  char* querryOut = NULL; //nome do arquivo de saída de dados
+  char* tempName = NULL;  //string a ser manipulada pela função strtok
+  char qTipo[5];      //tipo de consulta a ser feita (o? i? d? bb)
+  FILE* fQryIn;
+  FILE* fQryOutSvg;
+  FILE* fQryOutTxt;
+
+  if(dPath){
+    querryIn = (char *)malloc(sizeof(char)*(strlen(dPath)+strlen(nConsulta)+5));
+    sprintf(querryIn, "%s/%s", dPath, nConsulta);
+    }
+    else{
+      querryIn = (char *)malloc(sizeof(char)*(strlen(nConsulta)+5));
+      strcpy(querryIn, nConsulta);
+    }
+
+  fQryIn = fopen(querryIn, "r");
+  if(!fqIn){
+    printf("ERRO AO ABRIR O ARQUIVO DE CONSULTA\n");
+    exit(-1);
+  }
+
+  if(strstr(nConsulta, "/")){
+    tempName = nConsulta;
+    nArqGeo = strtok(tempName, "/");
+    //nArqGeo = strtok(nConsulta, "/");
+    while(nArqGeo!=NULL){
+      strcpy(nConsulta, nArqGeo);
+      nArqGeo = strtok(NULL, "/");
+    }
+    tempName = nConsulta;
+    nConsulta = strtok(tempName, ".");
+    //strtok(nConsulta, ".");
+  }
+  else{
+    tempName = nConsulta;
+    nConsulta = strtok(tempName, ".");
+    //strtok(nConsulta, ".");
+  }
+  querryOut = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+10));
+  sprintf(querryOut, "%s/%s-%s.svg", dDir, tnArq, nConsulta);
+  fQryOutSvg = fopen(querryOut, "w");
+  tempName = querryOut;
+  querryOut = strtok(tempName, ".");
+  //strtok(querryOut, ".");
+  sprintf(querryOut, "%s.txt", querryOut);
+  fQryOutTxt = fopen(querryOut, "w");
+
+  while(!feof(fQryIn)){
+    fscanf(fQryIn, "%s ", qTipo);
+    if(strcmp(qTipo, "bb")==0){
+        qry_bb(dDir, listasObjetos[0], bbCor, bbSufixo, tnArq, nConsulta);
+    }
+    else if(strcmp(qTipo, "i?")==0){
+      fprintf(fQryOutTxt, "i? ");
+      qry_i(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos[0]);
+    }
+    else if(strcmp(qTipo, "o?")==0){
+      fprintf(fQryOutTxt, "o? ");
+      qry_o(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos[0]);
+    }
+    else if(strcmp(qTipo, "d?")==0){
+      fprintf(fQryOutTxt, "d? ");
+      qry_d(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos[0]);
+    }
+  }
+
+  draw_svg(listasObjetos, fQryOutSvg);
+
+  fclose(fQryOutTxt);
+  fclose(fQryOutSvg);
+  fclose(fQryIn);
+}
+
+void qry_bb(char dDir[], Lista listsCR, char tnArq[], char nConsulta[], FILE* fQryIn){
+  Item aux;
   FILE* bbOut;
-  char* nIn;
   char* nOut;
+  int contLista = 1;
+  float r, w, h, x, y;
+  char itemTipo, cor[22], sufixo[21];
 
   nOut = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+strlen(sufixo)+5));  //Aloca para nOut o (tamanho de dDir + tnArq + sufixo + sufixo + ".svg" + 1) * sizeof(char)
   sprintf(nOut, "%s/%s-%s-%s.svg", dDir, tnArq, nConsulta, sufixo);
@@ -33,33 +112,52 @@ void qry_bb(char dDir[], Elemento *iElem, int size, char cor[], char sufixo[], c
     exit(-1);
   }
 
-  fprintf(bbOut, "<svg width=\"%d\" height=\"%d\">\n", 1000, 1000);         //Inicia o svg
-  aux = iElem;
-  while(aux!=NULL){
-    draw_svg(aux, bbOut, aux->tipo);
-    aux = aux->prox;
+  fscanf(fQryIn, "%s %s ", sufixo, cor);
+
+  fprintf(bbOut, "<svg>\n");
+
+  while(1){
+    aux = getItem(listaCR, contLista);
+    if(aux!=NULL)
+      formaDraw(aux, bbOut);
+    else
+      break;
+    contLista++;
   }
 
-  aux = iElem;
-  while(aux!=NULL){       //Desenha a bounding box
-    switch (aux->tipo){
-      case 'c':
-        draw_r(-1, 2* aux->r, 2* + aux->r, aux->x - aux->r, aux->y - aux->r, cor, "black", bbOut, 0.0);
-        break;
-      case 'r':
-        draw_e(aux->x+(aux->w/2), aux->y+(aux->h/2), aux->w/2, aux->h/2, cor, "black", bbOut, 0.0);
-        break;
+  contLista = 1;
+  while(1){
+    aux = getItem(listaCR, contLista);
+    if(aux!=NULL){
+      itemTipo = formaGetTipo(aux);
+      switch(itemTipo){
+        case 'c':
+          x = formaGetX(aux);
+          y = formaGetY(aux);
+          r = formaGetR(aux);
+          draw_r(2*r, 2*r, x-r, y-r, cor, "black", 1.0, 0.0, bbOut);
+          break;
+        case 'r':
+          x = formaGetX(aux);
+          y = formaGetY(aux);
+          w = formaGetW(aux);
+          h = formaGetH(aux);
+          draw_e(x+(w/2), y+(h/2), w/2, h/2, cor, "black", 1.0, 0.0, bbOut);
+          break;
+      }
     }
-    aux = aux->prox;
+    else
+      break;
+    contLista++;
   }
-  fprintf(bbOut, "</svg>");         //Termina o svg
+
+  fprintf(bbOut, "</svg>");
 
   free(nOut);
   fclose(bbOut);
 }
 
 void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Elemento *iElem){
-  int j;
   float x, y, dist;
   Elemento *aux;
 
