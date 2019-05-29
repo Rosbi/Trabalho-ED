@@ -1,5 +1,7 @@
 #include<string.h>
-#inclide"formasBase.h"
+#include<stdio.h>
+#include<stdlib.h>
+#include"formasBase.h"
 #include"torre.h"
 
 struct torre{
@@ -24,15 +26,15 @@ ItemTorre torreNew(char id[], float x, float y, int* sizeofItem){
   essa->strkW = stroke;
   essa->x = x;
   essa->y = y;
-  sizeofItem = sizeof(struct torre);
+  *sizeofItem = sizeof(struct torre);
 
   return essa;
 }
 
 void torreDraw(ItemTorre item, FILE* dir){
   struct torre *essa = item;
-  draw_c(-1, radius, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strW, 1, dir);
-  draw_l(essa->x, essa->y, essa->x, essa->y+15, essa->cor1, dir);
+  draw_c(radius, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strkW, 1, dir);
+  draw_l(essa->x, essa->y, essa->x, essa->y+15, essa->corStroke, dir);
 }
 
 void torreSetCorstroke(char pCor[]){
@@ -45,7 +47,7 @@ void torreSetStroke(float pStroke){
   stroke = pStroke;
 }
 
-char[] torreGetId(ItemTorre item){
+char* torreGetId(ItemTorre item){
   struct torre *essa = item;
   return essa->ID;
 }

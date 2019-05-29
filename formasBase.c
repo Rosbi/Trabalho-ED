@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include<stdlib.h>
 #include"formasBase.h"
 
 struct formaBase{
@@ -7,6 +8,7 @@ struct formaBase{
   int i;
   char corStroke[22];
   char corFill[22];
+  char text[255];
   float strkW;
   float x;
   float y;
@@ -14,12 +16,6 @@ struct formaBase{
   float w;
   float h;
 };
-struct formaTexto{
-  char tipo;
-  float x;
-  float y;
-  char text[255];
-}
 
 static float strokeC = 1.0;
 static float strokeR = 1.0;
@@ -30,13 +26,12 @@ Forma retanguloNew(int i, float x, float y, float w, float h, char cor1[], char 
   essa->i = i;
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
-  essa->strW = strokeR;
+  essa->strkW = strokeR;
   essa->x = x;
   essa->y = y;
   essa->w = w;
   essa->h = h;
-  essa->r = NULL;
-  sizeofItem = sizeof(struct formaBase);
+  *sizeofItem = sizeof(struct formaBase);
 
   return essa;
 }
@@ -46,23 +41,21 @@ Forma circuloNew(int i, float x, float y, float r, char cor1[], char cor2[], int
   essa->i = i;
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
-  essa->strW = strokeC;
+  essa->strkW = strokeC;
   essa->x = x;
   essa->y = y;
   essa->r = r;
-  essa->w = NULL;
-  essa->h = NULL;
-  sizeofItem = sizeof(struct formaBase);
+  *sizeofItem = sizeof(struct formaBase);
 
   return essa;
 }
-Forma textoNew(char[] text, float x, float y, int* sizeofItem){
-  struct formaTexto *essa = malloc(sizeof(struct formaTexto));
+Forma textoNew(char text[], float x, float y, int* sizeofItem){
+  struct formaBase *essa = malloc(sizeof(struct formaBase));
   essa->tipo = 't';
   essa->x = x;
   essa->y = y;
   strcpy(essa->text, text);
-  sizeofItem = sizeof(struct formaTexto);
+  *sizeofItem = sizeof(struct formaBase);
 
   return essa;
 }
@@ -71,10 +64,10 @@ void formaDraw(Forma form, FILE* dir){
   struct formaBase *essa = form;
   switch(essa->tipo){
     case 'r':
-      draw_r(essa->w, essa->h, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strW, 1, dir);
+      draw_r(essa->w, essa->h, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strkW, 1, dir);
       break;
     case 'c':
-      draw_c(essa->r, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strW, 1, dir);
+      draw_c(essa->r, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strkW, 1, dir);
       break;
     case 't':
       draw_t(essa->x, essa->y, essa->text, dir);
@@ -132,21 +125,21 @@ float formaGetR(Forma form){
   if(essa->tipo == 'c')
     return essa->r;
   else
-    return NULL;
+    return -1;
 }
 float formaGetW(Forma form){
   struct formaBase *essa = form;
   if(essa->tipo == 'r')
     return essa->w;
   else
-    return NULL;
+    return -1;
 }
 float formaGetH(Forma form){
   struct formaBase *essa = form;
   if(essa->tipo == 'r')
     return essa->h;
   else
-    return NULL;
+    return -1;
 }
 char formaGetTipo(Forma form){
   struct formaBase *essa = form;
@@ -157,7 +150,7 @@ int formaGetId(Forma form){
   if(essa->tipo == 'c' || essa->tipo == 'r')
     return essa->i;
   else
-    return NULL;
+    return -1;
 }
 
 void draw_r(float w, float h, float x, float y, char cor1[], char cor2[], float stroke, float opacity, FILE* dir){

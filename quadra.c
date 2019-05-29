@@ -1,6 +1,8 @@
 #include<string.h>
-#include"lista.h"
+#include<stdio.h>
+#include<stdlib.h>
 #include"quadra.h"
+#include"formasBase.h"
 
 struct quadra{
   char cep[15];
@@ -27,14 +29,14 @@ ItemQuadra quadraNew(float x, float y, float w, float h, char cep[], int* sizeof
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
   essa->strkW = stroke;
-  sizeofItem = sizeof(struct quadra);
+  *sizeofItem = sizeof(struct quadra);
 
   return essa;
 }
 
 void quadraDraw(ItemQuadra item, FILE* dir){
   struct quadra *essa = item;
-  draw_r(-1, essa->w, essa->h, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strkW, 1, dir);
+  draw_r(essa->w, essa->h, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strkW, 1, dir);
   draw_t(essa->x, essa->y, essa->cep, dir);
 }
 
@@ -48,7 +50,7 @@ void quadraSetStroke(float pStr){
   stroke = pStr;
 }
 
-char[] quadraGetCep(ItemQuadra item){
+char* quadraGetCep(ItemQuadra item){
   struct quadra *essa = item;
   return essa->cep;
 }

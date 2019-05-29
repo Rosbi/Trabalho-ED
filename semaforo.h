@@ -1,9 +1,11 @@
 #ifndef SEMAFORO_H
 #define SEMAFORO_H
 
+#include<stdio.h>
+
 typedef void* ItemSemaforo;
 
-ItemSemaforo semaforoNew(char[], float, float);
+ItemSemaforo semaforoNew(char[], float, float, int*);
 
 void semaforoDraw(ItemSemaforo, FILE*);
 
@@ -11,7 +13,7 @@ void semaforoSetCorstroke(char[]);
 void semaforoSetCorfill(char[]);
 void semaforoSetStroke(float);
 
-char[] semaforoGetId(ItemSemaforo);
+char* semaforoGetId(ItemSemaforo);
 float semaforoGetX(ItemSemaforo);
 float semaforoGetY(ItemSemaforo);
 

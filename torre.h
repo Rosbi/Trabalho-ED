@@ -1,6 +1,8 @@
 #ifndef TORRE_H
 #define TORRE_H
 
+#include<stdio.h>
+
 typedef void* ItemTorre;
 
 ItemTorre torreNew(char[], float, float, int*);
@@ -11,7 +13,7 @@ void torreSetCorstroke(char[]);
 void torreSetCorfill(char[]);
 void torreSetStroke(float);
 
-char[] torreGetId(ItemTorre);
+char* torreGetId(ItemTorre);
 float torreGetX(ItemTorre);
 float torreGetY(ItemTorre);
 

@@ -3,9 +3,9 @@
 
 typedef void* Forma;
 
-Forma retanguleNew(int, float, float, float, float, char[], char[], int*);
+Forma retanguloNew(int, float, float, float, float, char[], char[], int*);
 Forma circuloNew(int, float, float, float, char[], char[], int*);
-Fotma textoNew(char[], float, float, int*);
+Forma textoNew(char[], float, float, int*);
 
 void formaDraw(Forma, FILE*);
 

@@ -2,12 +2,10 @@
 #define SVG_H
 #include"lista.h"
 
-void inicializarListas(char*, int[], Lista[]);)
+void inicializarListas(char*, Lista[]);
 
-void draw_svg(Lista[], char[]);
+void create_svg(char[]);
 
-Elemento *novo_elem(FILE* geo, FILE* out, char tipo, Elemento *elem);
-
-void end_list(Elemento *elem);
+void draw_svg(Lista[], FILE*);
 
 #endif

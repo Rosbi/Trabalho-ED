@@ -1,6 +1,8 @@
 #ifndef QUADRA_H
 #define QUADRA_H
 
+#include<stdio.h>
+
 typedef void* ItemQuadra;
 
 ItemQuadra quadraNew(float, float, float, float, char[], int*); /*Parametros: coordenadas x e y da quadra, largura, altura e CEP
@@ -14,7 +16,7 @@ void quadraSetCorfill(char[]);
 void quadraSetStroke(float);
 
 //getters
-char[] quadraGetCep(ItemQuadra);
+char* quadraGetCep(ItemQuadra);
 float quadraGetX(ItemQuadra);
 float quadraGetY(ItemQuadra);
 float quadraGetW(ItemQuadra);

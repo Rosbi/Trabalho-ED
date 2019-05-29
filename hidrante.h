@@ -1,6 +1,8 @@
 #ifndef HIDRANTE_H
 #define HIDRANTE_H
 
+#include<stdio.h>
+
 typedef void* ItemHidrante;
 
 ItemHidrante hidranteNew(char[], float, float, int*);
@@ -11,7 +13,7 @@ void hidranteSetCorstroke(char[]);
 void hidranteSetCorfill(char[]);
 void hidranteSetStroke(float);
 
-char[] hidranteGetId(ItemHidrante);
+char* hidranteGetId(ItemHidrante);
 float hidranteGetX(ItemHidrante);
 float hidranteGetY(ItemHidrante);
 

@@ -20,6 +20,7 @@ int main(int argc, char *argv[]){
   char *nqIn = NULL;    //nome do arquivo qry de entrada
   char *nqOut = NULL;   //nome do arquivo qry da saída
   char *temp = NULL;
+  FILE *out;
 
   while(i<argc){
     if(strcmp("-f",argv[i]) == 0){                                  //Nome do arquivo de entrada "a01.geo" (relativo)
@@ -76,11 +77,14 @@ int main(int argc, char *argv[]){
   tnArq = strtok(temp, ".");
   //tnArq = strtok(tnArq, ".");
 
-  inicializarListas(tdPath, listaMax, listasObjetos);  //chama a função para criar o svg base
-  draw_svg(listasObjetos, tdDir);
+  inicializarListas(tdPath, listasObjetos);  //chama a função para criar o svg base
+  create_svg(tdDir);
+  out = fopen(tdDir, "r+");
+  draw_svg(listasObjetos, out);
+  fclose(out);
 
   if(nConsulta){
-    qry_start(tnArq, dDir, dPath, nConsulta, listasObjetos);
+    qry_start(tnArq, dDir, dPath, nConsulta, nArqGeo, listasObjetos);
   }
 
   if(!nConsulta)

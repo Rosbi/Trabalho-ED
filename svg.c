@@ -8,7 +8,7 @@
 #include"torre.h"
 #include"lista.h"
 
-void inicializarListas(char *nArqGeo, int listaMax[], Lista listasObjetos[]){
+void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
   int listaMax[] = {1000, 1000, 1000, 1000, 1000};  //o vetor representa respectivamente o maximo de circulos/retangulos, quadras, hidrantes, semaforos e torres
   char tipo[3], cfill[22], cstroke[22], cep[20], texto[255];
   Item aux;
@@ -21,43 +21,39 @@ void inicializarListas(char *nArqGeo, int listaMax[], Lista listasObjetos[]){
     printf("ERRO AO ABRIR O ARQUIVO GEO\n");
     exit(-1);
   }
-  if(!out){
-    printf("ERRO AO CRIAR O ARQUIVO SVG\n");
-    exit(-1);
-  }
 
   for(int i=0;i<6;i++){
     long int atual = ftell(geo);
     fscanf(geo, "%s ", tipo);
     if(strcmp(tipo, "nx") == 0){
-      fscanf(geo, "%d %d %d %d %d ", listaMax[0], listaMax[1], listaMax[2], listaMax[3], listaMax[4]);
+      fscanf(geo, "%d %d %d %d %d ", &listaMax[0], &listaMax[1], &listaMax[2], &listaMax[3], &listaMax[4]);
     }
     else if(strcmp(tipo, "cq") == 0){
-      fscanf(geo, "%s %s %f ", cfill, cstroke, sw);
+      fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
       quadraSetCorstroke(cstroke);
       quadraSetCorfill(cfill);
       quadraSetStroke(sw);
     }
     else if(strcmp(tipo, "ch") == 0){
-      fscanf(geo, "%s %s %f ", cfill, cstroke, sw);
+      fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
       hidranteSetCorstroke(cstroke);
       hidranteSetCorfill(cfill);
       hidranteSetStroke(sw);
     }
     else if(strcmp(tipo, "cr") == 0){
-      fscanf(geo, "%s %s %f ", cfill, cstroke, sw);
+      fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
       torreSetCorstroke(cstroke);
       torreSetCorfill(cfill);
       torreSetStroke(sw);
     }
     else if(strcmp(tipo, "cs") == 0){
-      fscanf(geo, "%s %s %f ", cfill, cstroke, sw);
+      fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
       semaforoSetCorstroke(cstroke);
       semaforoSetCorfill(cfill);
       semaforoSetStroke(sw);
     }
     else if(strcmp(tipo, "sw") == 0){
-      fscanf(geo, "%f %f ", sw, rw);
+      fscanf(geo, "%f %f ", &sw, &rw);
       formaSetStroke(sw, rw);
     }
     else
@@ -82,7 +78,7 @@ void inicializarListas(char *nArqGeo, int listaMax[], Lista listasObjetos[]){
       insertItem(listasObjetos[0], aux, sizeofItem);
     }
     else if(strcmp(tipo, "t")){
-      fscanf(geo, "%f %f", &ax, &y);
+      fscanf(geo, "%f %f", &x, &y);
       fgets(texto, 254, geo);
       aux = textoNew(texto, x, y, &sizeofItem);
       insertItem(listasObjetos[5], aux, sizeofItem);
@@ -90,7 +86,7 @@ void inicializarListas(char *nArqGeo, int listaMax[], Lista listasObjetos[]){
     else if(strcmp(tipo, "q")){
       fscanf(geo, "%s %f %f %f %f ", cep, &x, &y, &w, &h);
       aux = quadraNew(x, y, w, h, cep, &sizeofItem);
-      insertItem(listaObjetos[1], aux, sizeofItem);
+      insertItem(listasObjetos[1], aux, sizeofItem);
     }
     else if(strcmp(tipo, "h")){
       fscanf(geo, "%s %f %f ", cep, &x, &y);
@@ -104,35 +100,35 @@ void inicializarListas(char *nArqGeo, int listaMax[], Lista listasObjetos[]){
     }
     else if(strcmp(tipo, "s")){
       fscanf(geo, "%s %f %f ", cep, &x, &y);
-      aux = SemaforoNew(cep, x, y, &sizeofItem);
+      aux = semaforoNew(cep, x, y, &sizeofItem);
       insertItem(listasObjetos[4], aux, sizeofItem);
     }
     else if(strcmp(tipo, "cq")){
-      fscanf(geo, "%s %s %f ", cfill, cstroke, sw);
+      fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
       quadraSetCorstroke(cstroke);
       quadraSetCorfill(cfill);
       quadraSetStroke(sw);
     }
     else if(strcmp(tipo, "ch")){
-      fscanf(geo, "%s %s %f ", cfill, cstroke, sw);
+      fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
       hidranteSetCorstroke(cstroke);
       hidranteSetCorfill(cfill);
       hidranteSetStroke(sw);
     }
     else if(strcmp(tipo, "cr")){
-      fscanf(geo, "%s %s %f ", cfill, cstroke, sw);
+      fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
       torreSetCorstroke(cstroke);
       torreSetCorfill(cfill);
       torreSetStroke(sw);
     }
     else if(strcmp(tipo, "cs")){
-      fscanf(geo, "%s %s %f ", cfill, cstroke, sw);
+      fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
       semaforoSetCorstroke(cstroke);
       semaforoSetCorfill(cfill);
       semaforoSetStroke(sw);
     }
     else if(strcmp(tipo, "sw")){
-      fscanf(geo, "%f %f ", sw, rw);
+      fscanf(geo, "%f %f ", &sw, &rw);
       formaSetStroke(sw, rw);
     }
   }
@@ -140,12 +136,19 @@ void inicializarListas(char *nArqGeo, int listaMax[], Lista listasObjetos[]){
   fclose(geo);
 }
 
-void draw_svg(Lista listasObjetos, char[] nameOut){
-  FILE* out = fopen(nameOut, "w");
+void create_svg(char nameOut[]){
+  FILE* svg = fopen(nameOut, "w");
+  fprintf(svg, "<svg>\n</svg>");
+  fclose(svg);
+}
+
+void draw_svg(Lista listasObjetos[], FILE* out){
   Item temp;
+  char cc[7];
   int fimLista = 0, contLista;
 
-  fprintf(out, "<svg>\n");
+  fgets(cc, 7, out);
+
   for(int i=0;i<6;i++){
   contLista = 1;
     while(1){
@@ -175,7 +178,4 @@ void draw_svg(Lista listasObjetos, char[] nameOut){
       else break;
     }
   }
-  fprintf(out, "</svg>");
-
-  fclose(out);
 }

@@ -7,6 +7,7 @@
 #define NULO -1
 
 bool emptyList(Lista);
+int getLivre(Lista);
 
 struct Elemento{
     int prox, ant;

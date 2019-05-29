@@ -7,6 +7,11 @@
 #include"formasBase.h"
 #include"lista.h"
 
+void qry_bb(char[], Lista, char[], char[], FILE*);
+void qry_i(FILE*, FILE*, FILE*, Lista);
+void qry_o(FILE*, FILE*, FILE*, Lista);
+void qry_d(FILE*, FILE*, FILE*, Lista);
+
 float func_min(float a, float b){
   if(a>b)
     return b;
@@ -20,7 +25,7 @@ float func_max(float a, float b){
     return b;
 }
 
-void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], Lista listasObjetos[]){
+void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char nArqGeo[], Lista listasObjetos[]){
   char* querryIn = NULL;  //nome do arquivo de entrada de dados
   char* querryOut = NULL; //nome do arquivo de saída de dados
   char* tempName = NULL;  //string a ser manipulada pela função strtok
@@ -39,7 +44,7 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], Lista 
     }
 
   fQryIn = fopen(querryIn, "r");
-  if(!fqIn){
+  if(!fQryIn){
     printf("ERRO AO ABRIR O ARQUIVO DE CONSULTA\n");
     exit(-1);
   }
@@ -73,22 +78,20 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], Lista 
   while(!feof(fQryIn)){
     fscanf(fQryIn, "%s ", qTipo);
     if(strcmp(qTipo, "bb")==0){
-        qry_bb(dDir, listasObjetos[0], bbCor, bbSufixo, tnArq, nConsulta);
+      qry_bb(dDir, listasObjetos[0], tnArq, nConsulta, fQryIn);
     }
     else if(strcmp(qTipo, "i?")==0){
-      fprintf(fQryOutTxt, "i? ");
       qry_i(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos[0]);
     }
     else if(strcmp(qTipo, "o?")==0){
-      fprintf(fQryOutTxt, "o? ");
       qry_o(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos[0]);
     }
     else if(strcmp(qTipo, "d?")==0){
-      fprintf(fQryOutTxt, "d? ");
       qry_d(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos[0]);
     }
   }
 
+  fseek(fQryOutSvg, 0, SEEK_SET);
   draw_svg(listasObjetos, fQryOutSvg);
 
   fclose(fQryOutTxt);
@@ -96,7 +99,7 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], Lista 
   fclose(fQryIn);
 }
 
-void qry_bb(char dDir[], Lista listsCR, char tnArq[], char nConsulta[], FILE* fQryIn){
+void qry_bb(char dDir[], Lista listaCR, char tnArq[], char nConsulta[], FILE* fQryIn){
   Item aux;
   FILE* bbOut;
   char* nOut;
@@ -142,7 +145,7 @@ void qry_bb(char dDir[], Lista listsCR, char tnArq[], char nConsulta[], FILE* fQ
           y = formaGetY(aux);
           w = formaGetW(aux);
           h = formaGetH(aux);
-          draw_e(x+(w/2), y+(h/2), w/2, h/2, cor, "black", 1.0, 0.0, bbOut);
+          draw_e(x+(w/2), y+(h/2), w/2, h/2, cor, "black", 0.0, bbOut);
           break;
       }
     }
@@ -157,128 +160,172 @@ void qry_bb(char dDir[], Lista listsCR, char tnArq[], char nConsulta[], FILE* fQ
   fclose(bbOut);
 }
 
-void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Elemento *iElem){
-  float x, y, dist;
-  Elemento *aux;
+void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
+  Item aux;
+  float x, y, dist, xForma, yForma, rForma, wForma, hForma;
+  int j, contLista = 1;
+  char tipo;
 
   fscanf(fqIn, "%d %f %f", &j, &x, &y);
-  fprintf(fqOutTxt, "%d %f %f\n", j, x, y);
+  fprintf(fqOutTxt, "i? %d %f %f\n", j, x, y);
 
-  aux = iElem;
-  while(aux!=NULL){
-    if(aux->i != j)
-      aux = aux->prox;
+  while(1){
+    aux = getItem(listaCR, contLista);
+    if(aux!=NULL){
+      if(formaGetID(aux)==j)
+        break;
+    }
     else
       break;
+    contLista++;
   }
 
   if(aux!=NULL){
-    switch(aux->tipo){
+    tipo = formaGetTipo(aux);
+    xForma = formaGetX(aux);
+    yForma = formaGetY(aux);
+    switch(tipo){
       case 'c':
-        dist = sqrt(pow(x-aux->x, 2)+pow(y-aux->y, 2));
-        if(aux->r > dist){
-          draw_c(-1, 2, x, y, "green", "green", fqOutSvg, 1.0);
-          draw_l(aux->x, aux->y, x, y, "green", fqOutSvg);
+        rForma = formaGetR(aux);
+        dist = sqrt(pow(x-xForma, 2)+pow(y-yForma, 2));
+        if(rForma > dist){
+          draw_c(2, x, y, "green", "green", 1.0, 1.0, fqOutSvg);
+          draw_l(xForma, yForma, x, y, "green", fqOutSvg);
           fprintf(fqOutTxt, "SIM\n\n");
         }
         else{
-          draw_c(-1, 2, x, y, "red", "red", fqOutSvg, 1.0);
-          draw_l(aux->x, aux->y, x, y, "red", fqOutSvg);
+          draw_c(2, x, y, "red", "red", 1.0, 1.0, fqOutSvg);
+          draw_l(xForma, yForma, x, y, "red", fqOutSvg);
           fprintf(fqOutTxt, "NAO\n\n");
         }
         break;
       case 'r':
-        if((aux->x < x && x < (aux->x+aux->w)) && (aux->y < y && y < (aux->y+aux->h))){
-          draw_c(-1, 2, x, y, "green", "green", fqOutSvg, 1.0);
-          draw_l(aux->x + (aux->w/2), aux->y + (aux->h/2), x, y, "green", fqOutSvg);
+        wForma = formaGetW(aux);
+        hForma = formaGetH(aux);
+        if((xForma < x && x < (xForma+wForma)) && (yForma < y && y < (yForma+hForma))){
+          draw_c(2, x, y, "green", "green", 1.0, 1.0, fqOutSvg);
+          draw_l(xForma + (wForma/2), yForma + (hForma/2), x, y, "green", fqOutSvg);
           fprintf(fqOutTxt, "SIM\n\n");
         }
         else{
-          draw_c(-1, 2, x, y, "red", "red", fqOutSvg, 1.0);
-          draw_l(aux->x + (aux->w/2), aux->y + (aux->h/2), x, y, "red", fqOutSvg);
+          draw_c(2, x, y, "red", "red", 1.0, 1.0, fqOutSvg);
+          draw_l(xForma + (wForma/2), yForma + (hForma/2), x, y, "red", fqOutSvg);
           fprintf(fqOutTxt, "NAO\n\n");
         }
         break;
     }
   }
   else{
-    draw_c(-1, 2, x, y, "black", "black", fqOutSvg, 1.0);
+    draw_c(2, x, y, "black", "black", 1.0, 1.0, fqOutSvg);
     fprintf(fqOutTxt, "NAO EXISTE ELEMENTO %d\n\n", j);
   }
 
 }
 
-void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Elemento *iElem){
-  Elemento *aux = iElem, *aux2 = iElem;
-  int j, k;
+void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
+  Item aux1, aux2;
+  int j, k, contLista=1;
   float dist;
   float x1, y1, x2, y2;
+  float xForma[2], yForma[2], rForma[2], wForma[2], hForma[2];
+  char tipo[2];
   bool sob;
 
-  fscanf(fqIn, "%d %d", &j, &k);
+  fscanf(fqIn, "o? %d %d", &j, &k);
   fprintf(fqOutTxt, "%d %d\n", j, k);
 
-  while(aux!=NULL && aux->i!=j)
-    aux = aux->prox;
-  while(aux2!=NULL && aux2->i!=k)
-    aux2 = aux2->prox;
+  while(1){
+    aux1 = getItem(listaCR, contLista);
+    if(aux1 != NULL){
+      if(formaGetID(aux1) == j)
+        break;
+    }
+    else
+      break;
+    contLista++;
+  }
+  while(1){
+    aux2 = getItem(listaCR, contLista);
+    if(aux2 != NULL){
+      if(formaGetID(aux2) == k)
+        break;
+    }
+    else
+      break;
+    contLista++;
+  }
 
-  if(aux!=NULL && aux2!=NULL){
-    switch(aux->tipo){
+  if(aux1!=NULL && aux2!=NULL){
+    tipo[0] = formaGetTipo(aux1);
+    tipo[1] = formaGetTipo(aux2);
+    xForma[0] = formaGetX(aux1);
+    xForma[1] = formaGetX(aux2);
+    yForma[0] = formaGetY(aux1);
+    yForma[1] = formaGetY(aux2);
+    switch(tipo[0]){
       case 'c':
-        if(aux2->tipo == 'c'){                    //Se as figuras forem dois circulos
-          x1 = func_min(aux->x - aux->r, aux2->x - aux2->r);
-          y1 = func_min(aux->y - aux->r, aux2->y - aux2->r);
-          x2 = func_max(aux->x + aux->r, aux2->x + aux2->r);
-          y2 = func_max(aux->y + aux->r, aux2->y + aux2->r);
-          dist = sqrt(pow(aux->x-aux2->x, 2) + pow(aux->y-aux2->y, 2));
-          if(dist > aux->r+aux2->r)               //Se a distancia entre os centros de massa for maior que a soma dos raios, os circulos não se sobrepõem
+        rForma[0]= formaGetR(aux1);
+        if(tipo[1] == 'c'){                    //Se as figuras forem dois circulos
+          rForma[1] = formaGetR(aux2);
+          x1 = func_min(xForma[0] - rForma[0], xForma[1] - rForma[1]);
+          y1 = func_min(yForma[0] - rForma[0], yForma[1] - rForma[1]);
+          x2 = func_max(xForma[0] + rForma[0], xForma[1] + rForma[1]);
+          y2 = func_max(yForma[0] + rForma[0], yForma[1] + rForma[1]);
+          dist = sqrt(pow(xForma[0]-xForma[1], 2) + pow(yForma[0]-yForma[1], 2));
+          if(dist > rForma[0]+rForma[1])               //Se a distancia entre os centros de massa for maior que a soma dos raios, os circulos não se sobrepõem
             sob = false;
           else
             sob = true;
         }
         else{                                     //Se as figuras forem um circulo e um retangulo
-          if((aux->x > aux2->x && aux->x < aux2->x+aux2->w) && (aux->y > aux2->y && aux->y < aux2->y+aux2->h))    //Verifica se o centro do circulo esta dentro do retangulo
+          wForma[1] = formaGetR(aux2);
+          hForma[1] = formaGetR(aux2);
+          if((xForma[0] > xForma[1] && xForma[0] < xForma[1]+wForma[1]) && (yForma[0] > yForma[1] && yForma[0] < yForma[1]+hForma[1]))    //Verifica se o centro do circulo esta dentro do retangulo
             sob = true;
           else{
-            x1 = aux->x - func_max(aux2->x, func_min(aux->x, aux2->x + aux2->w));
-            y1 = aux->y - func_max(aux2->y, func_min(aux->y, aux2->y + aux2->h));
+            x1 = xForma[0] - func_max(xForma[1], func_min(xForma[0], xForma[1] + wForma[1]));
+            y1 = yForma[0] - func_max(yForma[1], func_min(yForma[0], yForma[1] + hForma[1]));
             dist = sqrt(x1*x1 + y1*y1);
-            if(dist < aux->r)
+            if(dist < rForma[0])
               sob = true;
             else
               sob = false;
-            x1 = func_min(aux->x - aux->r, aux2->x);
-            y1 = func_min(aux->y - aux->r, aux2->y);
-            x2 = func_max(aux->x + aux->r, aux2->x + aux2->w);
-            y2 = func_max(aux->y + aux->r, aux2->y + aux2->y);
+            x1 = func_min(xForma[0] - rForma[0], xForma[1]);
+            y1 = func_min(yForma[0] - rForma[0], yForma[1]);
+            x2 = func_max(xForma[0] + rForma[0], xForma[1] + wForma[1]);
+            y2 = func_max(yForma[0] + rForma[0], yForma[1] + yForma[1]);
           }
         }
         break;
       case 'r':
-        if(aux2->tipo == 'c'){                    //Se as figuras forem um retangulo e um circulo
-          if((aux2->x > aux->x && aux2->x < aux->x+aux->w) && (aux2->y > aux->y && aux2->y < aux->y+aux->h))    //Verifica se o centro do circulo esta dentro do retangulo
+        wForma[0] = formaGetR(aux1);
+        hForma[0] = formaGetR(aux1);
+        if(tipo[1] == 'c'){                    //Se as figuras forem um retangulo e um circulo
+          rForma[1] = formaGetR(aux2);
+          if((xForma[1] > xForma[0] && xForma[1] < xForma[0]+wForma[0]) && (yForma[1] > yForma[0] && yForma[1] < yForma[0]+hForma[0]))    //Verifica se o centro do circulo esta dentro do retangulo
             sob = true;
           else{
-            x1 = aux2->x - func_max(aux->x, func_min(aux2->x, aux->x + aux->w));
-            y1 = aux2->y - func_max(aux->y, func_min(aux2->y, aux->y + aux->h));
+            x1 = xForma[1] - func_max(xForma[0], func_min(xForma[1], xForma[0] + wForma[0]));
+            y1 = yForma[1] - func_max(yForma[0], func_min(yForma[1], yForma[0] + hForma[0]));
             dist = sqrt(x1*x1 + y1*y1);
-            if(dist < aux2->r)
+            if(dist < rForma[1])
               sob = true;
             else
               sob = false;
-            x1 = func_min(aux2->x - aux2->r, aux->x);
-            y1 = func_min(aux2->y - aux2->r, aux->y);
-            x2 = func_max(aux2->x + aux2->r, aux->x + aux->r);
-            y2 = func_max(aux2->y + aux2->r, aux->y + aux->r);
+            x1 = func_min(xForma[1] - rForma[1], xForma[0]);
+            y1 = func_min(yForma[1] - rForma[1], yForma[0]);
+            x2 = func_max(xForma[1] + rForma[1], xForma[0] + wForma[0]);
+            y2 = func_max(yForma[1] + rForma[1], yForma[0] + hForma[0]);
           }
         }
         else{                                     //Se as figuras forem dois retangulos
-          x1 = func_min(aux->x, aux2->x);
-          y1 = func_min(aux->y, aux2->y);
-          x2 = func_max(aux->x + aux->w, aux2->x + aux2->w);
-          y2 = func_max(aux->y + aux->h, aux2->y + aux2->h);
-          if((aux->x < aux2->x+aux2->w && aux->x+aux->w > aux2->x) && (aux->y < aux2->y+aux2->h && aux->y+aux->h > aux2->y)){   //Verifica se os retangulos se sobrepõe
+          wForma[1] = formaGetR(aux2);
+          hForma[1] = formaGetR(aux2);
+          x1 = func_min(xForma[0], xForma[1]);
+          y1 = func_min(yForma[0], yForma[1]);
+          x2 = func_max(xForma[0] + wForma[0], xForma[1] + wForma[1]);
+          y2 = func_max(yForma[0] + hForma[0], yForma[1] + hForma[1]);
+          if((xForma[0] < xForma[1]+wForma[1] && xForma[0]+wForma[0] > xForma[1]) && (yForma[0] < yForma[1]+hForma[1] && yForma[0]+hForma[0] > yForma[1])){   //Verifica se os retangulos se sobrepõe
             sob = true;
           }
           else{
@@ -288,7 +335,7 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Elemento *iElem){
         break;
     }
     if(sob){                                                          //caso as figuras se sobreponham, desenha um retangulo verde ao redor das duas
-      draw_r(-1, x1-x2, y1-y2, x1, y1, "green", "black", fqOutSvg, 0.0);
+      draw_r(x1-x2, y1-y2, x1, y1, "green", "black", 1.0, 0.0, fqOutSvg);
       fprintf(fqOutTxt, "SIM\n\n");
     }
     else{                                                             //caso contrário, desenha um retangulo tracejado azul
@@ -300,48 +347,81 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Elemento *iElem){
     fprintf(fqOutTxt, "ELEMENTO J OU K NÃO ENCONTRADO\n\n");
 }
 
-void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Elemento *iElem){
-  int j, k;
+void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
+  int j, k, contLista=1;
   float dist;
-  char dis[10];
-  Elemento *aux = iElem, *aux2 = iElem;
+  float xForma[2], yForma[2], wForma[2], hForma[2], rForma[2];
+  char dis[40], tipo[2];
+  Item aux1, aux2;
 
   fscanf(fqIn, "%d %d", &j, &k);
-  fprintf(fqOutTxt, "%d %d\n", j, k);
-  while(aux!=NULL && aux->i!=j)
-    aux = aux->prox;
-  while(aux2!=NULL && aux2->i!=k)
-    aux2 = aux2->prox;
+  fprintf(fqOutTxt, "d? %d %d\n", j, k);
 
-  if(aux!=NULL && aux2!=NULL){
-    switch(aux->tipo){
+  while(1){
+    aux1 = getItem(listaCR, contLista);
+    if(aux1 != NULL){
+      if(formaGetID(aux1) == j)
+        break;
+    }
+    else
+      break;
+    contLista++;
+  }
+  while(1){
+    aux2 = getItem(listaCR, contLista);
+    if(aux2 != NULL){
+      if(formaGetID(aux2) == k)
+        break;
+    }
+    else
+      break;
+    contLista++;
+  }
+
+  if(aux1!=NULL && aux2!=NULL){
+    tipo[0] = formaGetTipo(aux1);
+    tipo[1] = formaGetTipo(aux2);
+    xForma[0] = formaGetX(aux1);
+    xForma[1] = formaGetX(aux2);
+    yForma[0] = formaGetY(aux1);
+    yForma[1] = formaGetY(aux2);
+    switch(tipo[0]){
       case 'c':
-        if(aux2->tipo == 'c'){
-          dist = sqrt(pow(aux->x-aux2->x, 2) + pow(aux->y-aux2->y, 2));
-          draw_l(aux->x, aux->y, aux2->x, aux2->y, "black", fqOutSvg);
+      rForma[0] = formaGetR(aux1);
+        if(tipo[1] == 'c'){
+          rForma[1] = formaGetR(aux2);
+          dist = sqrt(pow(xForma[0]-xForma[1], 2) + pow(yForma[0]-yForma[1], 2));
+          draw_l(xForma[0], yForma[0], xForma[1], yForma[1], "black", fqOutSvg);
           sprintf(dis, "%f", dist);
-          draw_t((aux->x + aux2->x)/2, (aux->y + aux2->y)/2, dis, fqOutSvg);
+          draw_t((xForma[0] + xForma[1])/2, (yForma[0] + yForma[1])/2, dis, fqOutSvg);
         }
         else{
-          dist = sqrt(pow(aux->x-(aux2->x+aux2->w/2), 2) + pow(aux->y-(aux2->y+aux2->h/2), 2));
-          draw_l(aux->x, aux->y, aux2->x+aux2->w/2, aux2->y+aux2->h/2, "black", fqOutSvg);
+          wForma[1] = formaGetW(aux2);
+          hForma[1] = formaGetH(aux2);
+          dist = sqrt(pow(xForma[0]-(xForma[1]+wForma[1]/2), 2) + pow(yForma[0]-(yForma[1]+hForma[1]/2), 2));
+          draw_l(xForma[0], yForma[0], xForma[1]+wForma[1]/2, yForma[1]+hForma[1]/2, "black", fqOutSvg);
           sprintf(dis, "%f", dist);
-          draw_t((aux->x + aux2->x+aux2->w/2)/2, (aux->y + aux2->y+aux2->h/2)/2, dis, fqOutSvg);
+          draw_t((xForma[0] + xForma[1]+wForma[1]/2)/2, (yForma[0] + yForma[1]+hForma[1]/2)/2, dis, fqOutSvg);
         }
         fprintf(fqOutTxt, "%f\n\n", dist);
         break;
       case 'r':
-        if(aux2->tipo == 'c'){
-          dist = sqrt(pow((aux->x+aux->w/2)-aux2->x, 2) + pow((aux->y+aux->h/2)-aux2->y, 2));
-          draw_l(aux->x + aux->w/2, aux->y + aux->h/2, aux2->x, aux2->y, "black", fqOutSvg);
+        wForma[0] = formaGetW(aux1);
+        hForma[0] = formaGetH(aux1);
+        if(tipo[1] == 'c'){
+          rForma[1] = formaGetR(aux2);
+          dist = sqrt(pow((xForma[0]+wForma[0]/2)-xForma[1], 2) + pow((yForma[0]+hForma[0]/2)-yForma[1], 2));
+          draw_l(xForma[0] + wForma[0]/2, yForma[0] + hForma[0]/2, xForma[1], yForma[1], "black", fqOutSvg);
           sprintf(dis, "%f", dist);
-          draw_t((aux->x+aux->w/2 + aux2->x)/2, (aux->y+aux->h/2 + aux2->y)/2, dis, fqOutSvg);
+          draw_t((xForma[0]+wForma[0]/2 + xForma[1])/2, (yForma[0]+hForma[0]/2 + yForma[1])/2, dis, fqOutSvg);
         }
         else{
-          dist = sqrt(pow((aux->x+aux->w/2)-(aux2->x+aux2->w/2), 2) + pow((aux->y+aux->h/2)-(aux2->y+aux2->h/2), 2));
-          draw_l(aux->x + aux->w/2, aux->y + aux->h/2, aux2->x+aux2->w/2, aux2->y+aux2->h/2, "black", fqOutSvg);
+          wForma[1] = formaGetW(aux2);
+          hForma[1] = formaGetH(aux2);
+          dist = sqrt(pow((xForma[0]+wForma[0]/2)-(xForma[1]+wForma[1]/2), 2) + pow((yForma[0]+hForma[0]/2)-(yForma[1]+hForma[1]/2), 2));
+          draw_l(xForma[0] + wForma[0]/2, yForma[0] + hForma[0]/2, xForma[1]+wForma[1]/2, yForma[1]+hForma[1]/2, "black", fqOutSvg);
           sprintf(dis, "%f", dist);
-          draw_t((aux->x+aux->w/2 + aux2->x+aux2->w/2)/2, (aux->y+aux->h/2 + aux2->y+aux2->h/2)/2, dis, fqOutSvg);
+          draw_t((xForma[0]+wForma[0]/2 + xForma[1]+wForma[1]/2)/2, (yForma[0]+hForma[0]/2 + yForma[1]+hForma[1]/2)/2, dis, fqOutSvg);
         }
         fprintf(fqOutTxt, "%f\n\n", dist);
         break;
