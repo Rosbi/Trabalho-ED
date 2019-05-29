@@ -51,7 +51,7 @@ void insertItem(Lista lis, void* infor, size_t tamanho){
         li->elem[livre].prox = li->livre;
         li->elem[livre].ant = li->ult;printf("´´%d\n", li->ult);fflush(stdout);
         li->ult = livre;
-        li->elem[li->ult].prox = livre;printf("``%p\n", li->elem[0].info);fflush(stdout);
+        li->elem[li->ult].prox = livre;//printf("``%p\n", li->elem[0].info);fflush(stdout);
     }
 }
 
@@ -103,15 +103,15 @@ int getLivre(Lista lis){
 
 bool fullList(Lista lis){
     struct ListaImplementada *li = lis;
-    //int index = li->prim;
+    /*//int index = li->prim;
     int j;printf("++%d\n", li->prim);fflush(stdout);
     for(j=0;j<li->max;j++){printf("--%d\n", j);fflush(stdout);
         //index = li->elem[index].prox;
         if(!li->elem[j].info){
           break;
         }
-    }
-    if(j >= li->max){
+    }*/
+    if(li->livre == -1){
         return true;
     }
     else
@@ -133,9 +133,10 @@ Item getItem(Lista lis, int i){
     }
 
     int index = li->prim;
-    for(int j=0;j<i-1;j++){
-        index = li->elem[index].prox;
-    }
+    if(i<li->max)
+      for(int j=0;j<i-1;j++){
+          index = li->elem[index].prox;
+      }
 
     if(i <= li->max && index != NULO){
         if(li->elem[index].info){

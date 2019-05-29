@@ -57,8 +57,10 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
       fscanf(geo, "%f %f ", &sw, &rw);
       formaSetStroke(sw, rw);
     }
-    else
+    else{
       fseek(geo, atual, SEEK_SET);
+      break;
+    }
   }
 
   for(int i=0;i<5;i++){
@@ -70,7 +72,7 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
     fscanf(geo, "%s", tipo);printf("%s\n", tipo);fflush(stdout);
     if(strcmp(tipo, "c")==0){
       fscanf(geo, "%d %f %f %f %s %s ", &id, &r, &x, &y, cstroke, cfill);
-      aux = circuloNew(id, x, y, r, cstroke, cfill, &sizeofItem);
+      aux = circuloNew(id, x, y, r, cstroke, cfill, &sizeofItem);//printf("_%f_\n", formaGetX(aux));fflush(stdout);
       insertItem(listasObjetos[0], aux, sizeofItem);
     }
     else if(strcmp(tipo, "r")==0){
@@ -176,7 +178,9 @@ void draw_svg(Lista listasObjetos[], FILE* out){
             break;
         }
       }
-      else break;
+      else
+        break;
+      contLista++;
     }
   }
 }
