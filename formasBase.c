@@ -145,12 +145,17 @@ char formaGetTipo(Forma form){
   struct formaBase *essa = form;
   return essa->tipo;
 }
-int formaGetId(Forma form){
+int formaGetID(Forma form){
   struct formaBase *essa = form;
   if(essa->tipo == 'c' || essa->tipo == 'r')
     return essa->i;
   else
     return -1;
+}
+char* formaGetTexto(Forma form){
+  struct formaBase *essa = form;
+  if(essa->tipo == 't')
+    return essa->text;
 }
 
 void draw_r(float w, float h, float x, float y, char cor1[], char cor2[], float stroke, float opacity, FILE* dir){

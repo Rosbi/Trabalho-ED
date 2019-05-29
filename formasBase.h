@@ -26,6 +26,7 @@ float formaGetW(Forma);
 float formaGetH(Forma);
 char formaGetTipo(Forma);
 int formaGetID(Forma);
+char* formaGetTexto(Forma);
 
 void draw_r(float w, float h, float x, float y, char cor1[], char cor2[], float stroke, float opacity, FILE* dir);
 void draw_c(float r, float x, float y, char cor1[], char cor2[], float stroke, float opacity, FILE* dir);

@@ -43,7 +43,7 @@ void quadraDraw(ItemQuadra item, FILE* dir){
 void quadraSetCorstroke(char pCor[]){
   strcpy(cor1, pCor);
 }
-void quadrasetCorfill(char pCor[]){
+void quadraSetCorfill(char pCor[]){
   strcpy(cor2, pCor);
 }
 void quadraSetStroke(float pStr){

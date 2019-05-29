@@ -1,7 +1,7 @@
 all: siguel
 
 siguel: main.o lista.o query.o svg.o formasBase.o hidrante.o quadra.o semaforo.o torre.o
-	gcc -o siguel main.o formasBase.o query.o svg.o hidrante.o quadra.o semaforo.o torre.o -lm
+	gcc -o siguel main.o formasBase.o lista.o query.o svg.o hidrante.o quadra.o semaforo.o torre.o -lm
 
 main.o: main.c formasBase.h svg.h query.h
 	gcc -o main.o main.c -c -W -std=c99 -pedantic -fstack-protector-all

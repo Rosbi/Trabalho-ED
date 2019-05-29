@@ -27,6 +27,7 @@ Lista createList(int tamanho){
     for(int i=0;i<tamanho;i++){
         li->elem[i].prox = i+1;
         li->elem[i].ant = i-1;
+        li->elem[i].info = NULL;
     }
 
     li->elem[tamanho-1].prox = NULO;
@@ -41,17 +42,16 @@ void insertItem(Lista lis, void* infor, size_t tamanho){
     struct ListaImplementada *li = lis;
     if(!fullList(li)){
         int livre = getLivre(li);
-        li->elem[livre].info = malloc(tamanho);
+        li->elem[livre].info = calloc(1, tamanho);
         memcpy(li->elem[livre].info, infor, tamanho);
 
         if(emptyList(li))
             li->prim = livre;
 
         li->elem[livre].prox = li->livre;
-        li->elem[livre].ant = li->ult;
-        if(!emptyList(li))
-            li->elem[li->ult].prox = livre;
+        li->elem[livre].ant = li->ult;printf("´´%d\n", li->ult);fflush(stdout);
         li->ult = livre;
+        li->elem[li->ult].prox = livre;printf("``%p\n", li->elem[0].info);fflush(stdout);
     }
 }
 
@@ -103,12 +103,13 @@ int getLivre(Lista lis){
 
 bool fullList(Lista lis){
     struct ListaImplementada *li = lis;
-    int index = li->prim;
-    int j;
-    for(j=0;j<li->max;j++){
-        index = li->elem[index].prox;
-        if(!li->elem[index].info)
-            break;
+    //int index = li->prim;
+    int j;printf("++%d\n", li->prim);fflush(stdout);
+    for(j=0;j<li->max;j++){printf("--%d\n", j);fflush(stdout);
+        //index = li->elem[index].prox;
+        if(!li->elem[j].info){
+          break;
+        }
     }
     if(j >= li->max){
         return true;
