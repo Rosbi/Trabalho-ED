@@ -41,7 +41,7 @@ void torreSetCorstroke(char pCor[]){
   strcpy(cor1, pCor);
 }
 void torreSetCorfill(char pCor[]){
-  strcpy(cor1, pCor);
+  strcpy(cor2, pCor);
 }
 void torreSetStroke(float pStroke){
   stroke = pStroke;

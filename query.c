@@ -5,12 +5,12 @@
 #include<stdbool.h>
 #include"svg.h"
 #include"formasBase.h"
+#include"quadra.h"
+#include"hidrante.h"
+#include"semaforo.h"
+#include"torre.h"
 #include"lista.h"
-
-void qry_bb(char[], Lista[], char[], char[], FILE*);
-void qry_i(FILE*, FILE*, FILE*, Lista);
-void qry_o(FILE*, FILE*, FILE*, Lista);
-void qry_d(FILE*, FILE*, FILE*, Lista);
+#include"query.h"
 
 float func_min(float a, float b){
   if(a>b)
@@ -92,6 +92,15 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char n
     else if(strcmp(qTipo, "d?")==0){
       qry_d(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos[0]);
     }
+    else if(strcmp(qTipo, "dq")==0){
+      qry_dq(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos);
+    }
+    else if(strcmp(qTipo, "del")==0){
+      qry_del(fQryOutTxt, fQryIn, listasObjetos);
+    }
+    else if(strcmp(qTipo, "cbq")==0){}
+    else if(strcmp(qTipo, "crd?")==0){}
+    else if(strcmp(qTipo, "trns")==0){}
   }
 
   draw_svg(listasObjetos, fQryOutSvg);
@@ -438,4 +447,102 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   else{
     fprintf(fqOutTxt, "ELEMENTO J OU K NÃO ENCONTRADO\n\n");
   }
+}
+
+void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){} //COMING SOON
+
+void qry_del(FILE *fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
+  char tipoObjeto[2], cepid[21];
+  Item aux;
+  int contLista=1;
+  float x, y;
+  bool encontrado;
+
+  fgets(tipoObjeto, 2, fqIn);
+  fseek(fqIn, -1, SEEK_CUR);
+  fscanf(fqIn, "%s ", cepid);
+  fprintf(fqOutTxt, "del %s\n", cepid);
+  switch(tipoObjeto[0]){
+    case 'b':
+      while(1){
+        aux = getItem(listasObjetos[1], contLista);
+        if(aux){
+          if(strcmp(quadraGetCep(aux), cepid)==0){
+            removeItem(listasObjetos[1], contLista);
+            x = quadraGetX(aux);
+            y = quadraGetY(aux);
+            encontrado = true;
+            break;
+          }
+        }
+        else{
+          encontrado = false;
+          break;
+        }
+        contLista++;
+      }
+      break;
+    case 'h':
+      while(1){
+        aux = getItem(listasObjetos[2], contLista);
+        if(aux){
+          if(strcmp(hidranteGetId(aux), cepid)==0){
+            removeItem(listasObjetos[2], contLista);
+            x = hidranteGetX(aux);
+            y = hidranteGetY(aux);
+            encontrado = true;
+            break;
+          }
+        }
+        else{
+          encontrado = false;
+        break;
+      }
+      contLista++;
+    }
+      break;
+    case 's':
+      while(1){
+        aux = getItem(listasObjetos[3], contLista);
+        if(aux){//printf("%s\n", semaforoGetId(aux));
+          if(strcmp(semaforoGetId(aux), cepid)==0){
+            removeItem(listasObjetos[3], contLista);
+            x = semaforoGetX(aux);
+            y = semaforoGetY(aux);
+            encontrado = true;
+            break;
+          }
+        }
+        else{
+          encontrado = false;
+          break;
+        }
+        contLista++;
+      }
+      break;
+    case 'r':
+      while(1){
+        aux = getItem(listasObjetos[4], contLista);
+        if(aux){
+          if(strcmp(torreGetId(aux), cepid)==0){
+            removeItem(listasObjetos[4], contLista);
+            x = torreGetX(aux);
+            y = torreGetY(aux);
+            encontrado = true;
+            break;
+          }
+        }
+        else{
+          encontrado = false;
+          break;
+        }
+        contLista++;
+      }
+      break;
+  }
+  if(encontrado){
+    fprintf(fqOutTxt, "OBJETO REMOVIDO\ncoordenadas: %f, %f\n\n", x, y);
+  }
+  else
+    fprintf(fqOutTxt, "OBJETO NAO ENCONTRADO\n\n");
 }

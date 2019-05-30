@@ -174,5 +174,5 @@ void draw_l(float x1, float y1, float x2, float y2, char cor[], FILE *dir){
   fprintf(dir, "\t<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke=\"%s\" stroke-width=\"0.5\"/>\n", x1, y1, x2, y2, cor);
 }
 void draw_t(float x, float y, char texto[], FILE* dir){
-  fprintf(dir, "\t<text x=\"%f\" y=\"%f\" fill=\"black\">%s\t</text>\n", x, y, texto);
+  fprintf(dir, "\t<text x=\"%f\" y=\"%f\" fill=\"black\" font-size=\"6\">%s\t</text>\n", x, y, texto);
 }

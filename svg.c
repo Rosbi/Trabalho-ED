@@ -100,12 +100,12 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
     else if(strcmp(tipo, "rb")==0){
       fscanf(geo, "%s %f %f ", cep, &x, &y);
       aux = torreNew(cep, x, y, &sizeofItem);
-      insertItem(listasObjetos[3], aux, sizeofItem);
+      insertItem(listasObjetos[4], aux, sizeofItem);
     }
     else if(strcmp(tipo, "s")==0){
       fscanf(geo, "%s %f %f ", cep, &x, &y);
       aux = semaforoNew(cep, x, y, &sizeofItem);
-      insertItem(listasObjetos[4], aux, sizeofItem);
+      insertItem(listasObjetos[3], aux, sizeofItem);
     }
     else if(strcmp(tipo, "cq")==0){
       fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
@@ -154,6 +154,8 @@ void finalize_svg(char nameOut[]){
 void draw_svg(Lista listasObjetos[], FILE* out){
   Item temp;
   int contLista;
+
+  fseek(out, 0, SEEK_END);
 
   for(int i=0;i<6;i++){
   contLista = 1;

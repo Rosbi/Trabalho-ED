@@ -14,10 +14,10 @@ struct semaforo{
 };
 
 static char cor1[22] = "magenta";
-static char cor2[22] = "black";
+static char cor2[22] = "green";
 static float stroke = 1.0;
-static float width = 15.0;
-static float height = 5.0;
+static float width = 10.0;
+static float height = 20.0;
 
 ItemSemaforo semaforoNew(char id[], float x, float y, int* sizeofItem){
   struct semaforo *essa = malloc(sizeof(struct semaforo));
@@ -35,14 +35,14 @@ ItemSemaforo semaforoNew(char id[], float x, float y, int* sizeofItem){
 void semaforoDraw(ItemSemaforo item, FILE* dir){
   struct semaforo *essa = item;
   draw_r(width, height, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strkW, 1, dir);
-  draw_t(essa->x+(width/2), essa->y+(height/2), "S", dir);
+  draw_t(essa->x+(width/2)-2, essa->y+(height/2)+2, "S", dir);
 }
 
 void semaforoSetCorstroke(char pCor[]){
   strcpy(cor1, pCor);
 }
 void semaforoSetCorfill(char pCor[]){
-  strcpy(cor1, pCor);
+  strcpy(cor2, pCor);
 }
 void semaforoSetStroke(float pStroke){
   stroke = pStroke;

@@ -34,14 +34,14 @@ ItemHidrante hidranteNew(char id[], float x, float y, int* sizeofItem){
 void hidranteDraw(ItemHidrante item, FILE* dir){
   struct hidrante *essa = item;
   draw_c(radius, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strkW, 1, dir);
-  draw_t(essa->x, essa->y, "H", dir);
+  draw_t(essa->x-2, essa->y+2, "H", dir);
 }
 
 void hidranteSetCorstroke(char pCor[]){
   strcpy(cor1, pCor);
 }
 void hidranteSetCorfill(char pCor[]){
-  strcpy(cor1, pCor);
+  strcpy(cor2, pCor);
 }
 void hidranteSetStroke(float pStroke){
   stroke = pStroke;

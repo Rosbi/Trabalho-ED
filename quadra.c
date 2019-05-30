@@ -37,7 +37,7 @@ ItemQuadra quadraNew(float x, float y, float w, float h, char cep[], int* sizeof
 void quadraDraw(ItemQuadra item, FILE* dir){
   struct quadra *essa = item;
   draw_r(essa->w, essa->h, essa->x, essa->y, essa->corStroke, essa->corFill, essa->strkW, 1, dir);
-  draw_t(essa->x, essa->y, essa->cep, dir);
+  draw_t(essa->x+(essa->w/2), essa->y+(essa->h/2), essa->cep, dir);
 }
 
 void quadraSetCorstroke(char pCor[]){
