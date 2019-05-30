@@ -25,6 +25,36 @@ float func_max(float a, float b){
     return b;
 }
 
+bool metricaL1(float r1, float x1, float y1, float x2, float y2, float w2, float h2){
+    if(fabs(x2-x1)+fabs(y2-y1) <= r1){
+        if(fabs((x2+w2)-x1)+fabs(y2-y1)<=r1){
+            if(fabs(x2-x1)+fabs((y2+h2)-y1)<=r1){
+                if(fabs((x2+w2)-x1)+fabs((y2+h2)-y1)<=r1){
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        return false;
+    }
+    return false;
+}
+bool metricaL2(float r1, float x1, float y1, float x2, float y2, float w2, float h2){
+  if(sqrt(pow((x2-x1),2)+pow((y2-y1),2)) <= r1){
+      if(sqrt(pow(((x2+w2)-x1),2)+pow((y2-y1),2)) <= r1){
+          if(sqrt(pow((x2-x1),2)+pow(((y2+h2)-y1),2)) <= r1){
+              if(sqrt(pow(((x2+w2)-x1),2)+pow(((y2+h2)-y1),2)) <= r1){
+                  return true;
+              }
+              return false;
+          }
+          return false;
+      }
+      return false;
+  }
+  return false;
+}
 bool SqrTotalOverSqr(float xs, float ys, float ws, float hs, float x, float y, float w, float h){
   if(x>xs && y>ys && (x+w)<(xs+ws) && (y+h)<(ys+hs))
     return true;
@@ -374,11 +404,11 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
         break;
     }
     if(sob){                                                          //caso as figuras se sobreponham, desenha um retangulo verde ao redor das duas
-      draw_r(abs(x1-x2), abs(y1-y2), x1, y1, "green", "black", 1.0, 0.0, fqOutSvg);
+      draw_r(fabs(x1-x2), fabs(y1-y2), x1, y1, "green", "black", 1.0, 0.0, fqOutSvg);
       fprintf(fqOutTxt, "SIM\n\n");
     }
     else{                                                             //caso contrário, desenha um retangulo tracejado azul
-      draw_r_dash(abs(x1-x2), abs(y1-y2), x1, y1, "blue", fqOutSvg);
+      draw_r_dash(fabs(x1-x2), fabs(y1-y2), x1, y1, "blue", fqOutSvg);
       fprintf(fqOutTxt, "NAO\n\n");
     }
   }
@@ -470,7 +500,100 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
     fprintf(fqOutTxt, "ELEMENTO J OU K NÃO ENCONTRADO\n\n");
   }
 }
-void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){} //COMING SOON
+void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
+  Item aux;
+  int contLista=1;
+  float x, y, r, ax, ay, aw, ah;
+  char id[50], tipoObjeto[2], metrica[3];
+  bool encontrado = false;
+
+  fscanf(fqIn, "%s ", metrica);
+  fgets(tipoObjeto, 2, fqIn);
+  fseek(fqIn, -1, SEEK_CUR);
+  fscanf(fqIn, "%s %f ", id, &r);
+  fprintf(fqOutTxt, "dq %s %s %f\n", metrica, id, r);
+
+  switch(tipoObjeto[0]){
+    case 'h':
+      while(1){
+        aux = getItem(listasObjetos[2], contLista);
+        if(aux){
+          if(strcmp(hidranteGetId(aux), id)==0){
+            x = hidranteGetX(aux);
+            y = hidranteGetY(aux);
+            encontrado = true;
+            fprintf(fqOutTxt, "Hidrante: %f %f\n", x, y);
+            draw_c(8, hidranteGetX(aux), hidranteGetY(aux), "magenta", "magenta", 0.5, 1.0, fqOutSvg);
+          }
+        }
+        else
+          break;
+        contLista++;
+      }
+      break;
+    case 's':
+      while(1){
+        aux = getItem(listasObjetos[3], contLista);
+        if(aux){
+          if(strcmp(semaforoGetId(aux), id)==0){
+            x = semaforoGetX(aux);
+            y = semaforoGetY(aux);
+            encontrado = true;
+            fprintf(fqOutTxt, "Semaforo: %f %f\n", x, y);
+            draw_r(13, 23, semaforoGetX(aux)-1.5, semaforoGetY(aux)-1.5, "magenta", "magenta", 0.5, 1.0, fqOutSvg);
+          }
+        }
+        else
+          break;
+        contLista++;
+      }
+      break;
+    case 't':
+      while(1){
+        aux = getItem(listasObjetos[4], contLista);
+        if(aux){
+          if(strcmp(torreGetId(aux), id)==0){
+            x = torreGetX(aux);
+            y = torreGetY(aux);
+            encontrado = true;
+            fprintf(fqOutTxt, "Torre de Radio: %f %f\n", x, y);
+            draw_c(8, x, y, "magenta", "magenta", 0.5, 1.0, fqOutSvg);
+            draw_l(x, y, x, y+7, "magenta", fqOutSvg);
+          }
+        }
+        else
+          break;
+        contLista++;
+      }
+      break;
+  }
+  if(!encontrado){
+    fprintf(fqOutTxt, "OBJETO NAO ENCONTRADO\n\n");
+    return;
+  }
+
+  contLista=0;
+  while(1){
+    contLista++;
+    aux = getItem(listasObjetos[1], contLista);
+    if(aux){
+      ax = quadraGetX(aux);
+      ay = quadraGetY(aux);
+      aw = quadraGetW(aux);
+      ah = quadraGetH(aux);
+      if(strcmp(metrica, "L1")==0 && metricaL1(r, x, y, ax, ay, aw, ah)){
+        fprintf(fqOutTxt, "QUADRA REMOVIDA: %s\n", quadraGetCep(aux));
+        removeItem(listasObjetos[1], contLista);
+      }
+      else if(strcmp(metrica, "L2")==0 && metricaL2(r, x, y, ax, ay, aw, ah)){
+        fprintf(fqOutTxt, "QUADRA REMOVIDA: %s\n", quadraGetCep(aux));
+        removeItem(listasObjetos[1], contLista);
+      }
+    }
+    else
+      break;
+  }
+}
 void qry_del(FILE *fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
   char tipoObjeto[2], cepid[21];
   Item aux;
@@ -687,7 +810,7 @@ void qry_trns(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
   float x, y, w, h, dx, dy, ax, ay, aw, ah;
 
   fscanf(fqIn, "%f %f %f %f %f %f ", &x, &y, &w, &h, &dx, &dy);
-  fprintf(fqIn, "trns %f %f %f %f %f %f\n", x, y, w, h, dx, dy);
+  fprintf(fqOutTxt, "trns %f %f %f %f %f %f\n", x, y, w, h, dx, dy);
   while(1){
     aux = getItem(listasObjetos[1], contLista);
     if(aux){
@@ -696,6 +819,7 @@ void qry_trns(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
       aw = quadraGetW(aux);
       ah = quadraGetH(aux);
       if(SqrTotalOverSqr(x, y, w, h, ax, ay, aw, ah)){
+        fprintf(fqOutTxt, "%s coord antigas: %f %f, novas: %f %f\n", quadraGetCep(aux), ax, ay, ax+dx, ay+dy);
         quadraSetX(aux, ax+dx);
         quadraSetY(aux, ay+dy);
       }

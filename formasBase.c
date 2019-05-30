@@ -171,7 +171,7 @@ void draw_r_dash(float w, float h, float x, float y, char cor[], FILE* dir){
   fprintf(dir, "\t<rect width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" stroke=\"%s\" fill=\"white\" stroke-width=\"0.5\" stroke-dasharray=\"5,5\" fill-opacity=\"0.0\"/>\n", w, h, x, y, cor);
 }
 void draw_l(float x1, float y1, float x2, float y2, char cor[], FILE *dir){
-  fprintf(dir, "\t<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke=\"%s\" stroke-width=\"0.5\"/>\n", x1, y1, x2, y2, cor);
+  fprintf(dir, "\t<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke=\"%s\" stroke-width=\"1\"/>\n", x1, y1, x2, y2, cor);
 }
 void draw_t(float x, float y, char texto[], FILE* dir){
   fprintf(dir, "\t<text x=\"%f\" y=\"%f\" fill=\"black\" font-size=\"6\">%s\t</text>\n", x, y, texto);
