@@ -42,16 +42,20 @@ void insertItem(Lista lis, void* infor, size_t tamanho){
     struct ListaImplementada *li = lis;
     if(!fullList(li)){
         int livre = getLivre(li);
+
+        if(emptyList(li)){
+          li->prim = livre;
+          li->ult = livre;
+          printf("oio");fflush(stdout);
+        }
+
         li->elem[livre].info = calloc(1, tamanho);
         memcpy(li->elem[livre].info, infor, tamanho);
 
-        if(emptyList(li))
-            li->prim = livre;
-
         li->elem[livre].prox = li->livre;
-        li->elem[livre].ant = li->ult;printf("´´%d\n", li->ult);fflush(stdout);
-        li->ult = livre;
+        li->elem[livre].ant = li->ult;printf("´´%d\n", li->elem[li->ult].prox);fflush(stdout);
         li->elem[li->ult].prox = livre;//printf("``%p\n", li->elem[0].info);fflush(stdout);
+        li->ult = livre;
     }
 }
 

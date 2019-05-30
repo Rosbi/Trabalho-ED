@@ -76,12 +76,13 @@ int main(int argc, char *argv[]){
   temp = tnArq;
   tnArq = strtok(temp, ".");
   //tnArq = strtok(tnArq, ".");
-  
+
   inicializarListas(tdPath, listasObjetos);  //chama a função para criar o svg base
   create_svg(tdDir);
   out = fopen(tdDir, "r+");
   draw_svg(listasObjetos, out);
   fclose(out);
+  finalize_svg(tdDir);
 
   if(nConsulta){
     qry_start(tnArq, dDir, dPath, nConsulta, nArqGeo, listasObjetos);

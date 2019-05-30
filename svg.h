@@ -5,6 +5,7 @@
 void inicializarListas(char*, Lista[]);
 
 void create_svg(char[]);
+void finalize_svg(char[]);
 
 void draw_svg(Lista[], FILE*);
 

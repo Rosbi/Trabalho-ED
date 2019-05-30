@@ -26,8 +26,9 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
     long int atual = ftell(geo);
     fscanf(geo, "%s ", tipo);
     if(strcmp(tipo, "nx") == 0){
-      //fscanf(geo, "%d %d %d %d %d ", &listaMax[0], &listaMax[1], &listaMax[2], &listaMax[3], &listaMax[4]);
-      fscanf(geo, "%d ", &listaMax[0]);
+      fscanf(geo, "%d", &listaMax[0]);
+      if(fgetc(geo) != '\n')
+        fscanf(geo, "%d %d %d %d ", &listaMax[1], &listaMax[2], &listaMax[3], &listaMax[4]);
     }
     else if(strcmp(tipo, "cq") == 0){
       fscanf(geo, "%s %s %f ", cfill, cstroke, &sw);
@@ -69,7 +70,7 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
   listasObjetos[5] = createList(1000);
 
   while(!feof(geo)){
-    fscanf(geo, "%s", tipo);printf("%s\n", tipo);fflush(stdout);
+    fscanf(geo, "%s", tipo);//printf("%s\n", tipo);fflush(stdout);
     if(strcmp(tipo, "c")==0){
       fscanf(geo, "%d %f %f %f %s %s ", &id, &r, &x, &y, cstroke, cfill);
       aux = circuloNew(id, x, y, r, cstroke, cfill, &sizeofItem);//printf("_%f_\n", formaGetX(aux));fflush(stdout);
@@ -141,14 +142,19 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
 
 void create_svg(char nameOut[]){
   FILE* svg = fopen(nameOut, "w");
-  fprintf(svg, "<svg>\n</svg>");
+  fprintf(svg, "<svg>\n");
+  fclose(svg);
+}
+void finalize_svg(char nameOut[]){
+  FILE* svg = fopen(nameOut, "a");
+  fprintf(svg, "</svg>");
   fclose(svg);
 }
 
 void draw_svg(Lista listasObjetos[], FILE* out){
   Item temp;
   char cc[7];
-  int fimLista = 0, contLista;
+  int contLista;
 
   fgets(cc, 7, out);
 
