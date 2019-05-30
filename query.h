@@ -13,5 +13,8 @@ void qry_o(FILE*, FILE*, FILE*, Lista);
 void qry_d(FILE*, FILE*, FILE*, Lista);
 void qry_dq(FILE*, FILE*, FILE*, Lista[]);
 void qry_del(FILE*, FILE*, Lista[]);
+void qry_cbq(FILE*, FILE*, Lista[]);
+void qry_crd(FILE*, FILE*, Lista[]);
+void qry_trns(FILE*, FILE*, Lista[]);
 
 #endif

@@ -91,3 +91,7 @@ void quadraSetH(ItemQuadra item, float pH){
   struct quadra *essa = item;
   essa->h = pH;
 }
+void quadraSetThisStroke(ItemQuadra item, char pCor[]){
+  struct quadra *essa = item;
+  strcpy(essa->corStroke, pCor);
+}

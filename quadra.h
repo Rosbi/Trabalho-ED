@@ -28,5 +28,6 @@ void quadraSetX(ItemQuadra, float);
 void quadraSetY(ItemQuadra, float);
 void quadraSetW(ItemQuadra, float);
 void quadraSetH(ItemQuadra, float);
+void quadraSetThisStroke(ItemQuadra, char[]);
 
 #endif

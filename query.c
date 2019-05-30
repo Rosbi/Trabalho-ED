@@ -25,6 +25,25 @@ float func_max(float a, float b){
     return b;
 }
 
+bool SqrTotalOverSqr(float xs, float ys, float ws, float hs, float x, float y, float w, float h){
+  if(x>xs && y>ys && (x+w)<(xs+ws) && (y+h)<(ys+hs))
+    return true;
+  else
+    return false;
+}
+bool CirTotalOverSqr(float xc, float yc, float r, float xs, float ys, float w, float h){
+  float dist1, dist2, dist3, dist4, x1, y1;
+
+    dist1 = sqrt(pow(xc-xs, 2)+pow(yc-ys, 2));
+    dist2 = sqrt(pow(xc-(xs+w), 2)+pow(yc-ys, 2));
+    dist3 = sqrt(pow(xc-xs, 2)+pow(yc-(ys+h), 2));
+    dist4 = sqrt(pow(xc-(xs+w), 2)+pow(yc-(ys+h), 2));
+    if(dist1 < r && dist2 < r && dist3<r && dist4<r)
+      return true;
+    else
+      return  false;
+}
+
 void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char nArqGeo[], Lista listasObjetos[]){
   char* querryIn = NULL;  //nome do arquivo de entrada de dados
   char* querryOut = NULL; //nome do arquivo de saída de dados
@@ -98,9 +117,15 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char n
     else if(strcmp(qTipo, "del")==0){
       qry_del(fQryOutTxt, fQryIn, listasObjetos);
     }
-    else if(strcmp(qTipo, "cbq")==0){}
-    else if(strcmp(qTipo, "crd?")==0){}
-    else if(strcmp(qTipo, "trns")==0){}
+    else if(strcmp(qTipo, "cbq")==0){
+      qry_cbq(fQryOutTxt, fQryIn, listasObjetos);
+    }
+    else if(strcmp(qTipo, "crd?")==0){
+      qry_crd(fQryOutTxt, fQryIn, listasObjetos);
+    }
+    else if(strcmp(qTipo, "trns")==0){
+      qry_trns(fQryOutTxt, fQryIn, listasObjetos);
+    }
   }
 
   draw_svg(listasObjetos, fQryOutSvg);
@@ -170,7 +195,6 @@ void qry_bb(char dDir[], Lista listaCR[], char tnArq[], char nConsulta[], FILE* 
 
   free(nOut);
 }
-
 void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   Item aux;
   float x, y, dist, xForma, yForma, rForma, wForma, hForma;
@@ -232,7 +256,6 @@ void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   }
 
 }
-
 void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   Item aux1, aux2;
   int j, k, contLista=1;
@@ -362,7 +385,6 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   else                                                                //caso aux ou aux2 seja NULL, os elementos lidos não existem
     fprintf(fqOutTxt, "ELEMENTO J OU K NÃO ENCONTRADO\n\n");
 }
-
 void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   int j, k, contLista=1;
   float dist;
@@ -448,9 +470,7 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
     fprintf(fqOutTxt, "ELEMENTO J OU K NÃO ENCONTRADO\n\n");
   }
 }
-
 void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){} //COMING SOON
-
 void qry_del(FILE *fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
   char tipoObjeto[2], cepid[21];
   Item aux;
@@ -545,4 +565,143 @@ void qry_del(FILE *fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
   }
   else
     fprintf(fqOutTxt, "OBJETO NAO ENCONTRADO\n\n");
+}
+void qry_cbq(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
+  Item aux;
+  char cstrk[22], cep[50];
+  float x, y, r, xaux, yaux, w, h;
+  int contLista=1;
+
+  fscanf(fqIn, "%f %f %f %s ", &x, &y, &r, cstrk);
+  fprintf(fqOutTxt, "cbq %f %f %f\n", x, y, r);
+
+  while(1){
+    aux = getItem(listasObjetos[1], contLista);
+    if(aux){
+      xaux = quadraGetX(aux);
+      yaux = quadraGetY(aux);
+      w = quadraGetW(aux);
+      h = quadraGetH(aux);
+      if(CirTotalOverSqr(x, y, r, xaux, yaux, w, h)){
+        strcpy(cep, quadraGetCep(aux));
+        fprintf(fqOutTxt, "%s\n", cep);
+        quadraSetThisStroke(aux, cstrk);
+      }
+    }
+    else
+      break;
+    contLista++;
+  }
+}
+void qry_crd(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
+  Item aux;
+  float x, y;
+  int contLista=1;
+  char tipoObjeto[2], cepid[50];
+  bool encontrado = false;
+
+  fgets(tipoObjeto, 2, fqIn);
+  fseek(fqIn, -1, SEEK_CUR);
+  fscanf(fqIn, "%s ", cepid);
+  fprintf(fqOutTxt, "crd? %s\n", cepid);
+  switch(tipoObjeto[0]){
+    case 'b':
+      while(1){
+        aux = getItem(listasObjetos[1], contLista);
+        if(aux){
+          if(strcmp(quadraGetCep(aux), cepid)==0){
+            x = quadraGetX(aux);
+            y = quadraGetY(aux);
+            fprintf(fqOutTxt, "Quadra: %f %f\n\n", x, y);
+            encontrado = true;
+            break;
+          }
+        }
+        else{
+          break;
+        }
+        contLista++;
+      }
+      break;
+    case 'h':
+      while(1){
+        aux = getItem(listasObjetos[2], contLista);
+        if(aux){//printf("%s\n", hidranteGetId(aux));
+          if(strcmp(hidranteGetId(aux), cepid)==0){
+            x = hidranteGetX(aux);
+            y = hidranteGetY(aux);
+            fprintf(fqOutTxt, "Hidrante: %f %f\n\n", x, y);
+            encontrado = true;
+            break;
+          }
+        }
+        else{
+        break;
+      }
+      contLista++;
+    }
+      break;
+    case 's':
+      while(1){
+        aux = getItem(listasObjetos[3], contLista);
+        if(aux){//printf("%s\n", semaforoGetId(aux));
+          if(strcmp(semaforoGetId(aux), cepid)==0){
+            x = semaforoGetX(aux);
+            y = semaforoGetY(aux);
+            fprintf(fqOutTxt, "Semaforo: %f %f\n\n", x, y);
+            encontrado = true;
+            break;
+          }
+        }
+        else{
+          break;
+        }
+        contLista++;
+      }
+      break;
+    case 'r':
+      while(1){
+        aux = getItem(listasObjetos[4], contLista);
+        if(aux){
+          if(strcmp(torreGetId(aux), cepid)==0){
+            x = torreGetX(aux);
+            y = torreGetY(aux);
+            fprintf(fqOutTxt, "Torre de Radio: %f %f\n\n", x, y);
+            encontrado = true;
+            break;
+          }
+        }
+        else{
+          break;
+        }
+        contLista++;
+      }
+      break;
+  }
+  if(!encontrado)
+    fprintf(fqOutTxt, "OBJETO NAO ENCONTRADO\n\n");
+}
+void qry_trns(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
+  Item aux;
+  int contLista=1;
+  float x, y, w, h, dx, dy, ax, ay, aw, ah;
+
+  fscanf(fqIn, "%f %f %f %f %f %f ", &x, &y, &w, &h, &dx, &dy);
+  fprintf(fqIn, "trns %f %f %f %f %f %f\n", x, y, w, h, dx, dy);
+  while(1){
+    aux = getItem(listasObjetos[1], contLista);
+    if(aux){
+      ax = quadraGetX(aux);
+      ay = quadraGetY(aux);
+      aw = quadraGetW(aux);
+      ah = quadraGetH(aux);
+      if(SqrTotalOverSqr(x, y, w, h, ax, ay, aw, ah)){
+        quadraSetX(aux, ax+dx);
+        quadraSetY(aux, ay+dy);
+      }
+    }
+    else
+      break;
+    contLista++;
+  }
 }
