@@ -10,6 +10,6 @@ void qry_start(char[], char[], char[], char[], char[], Lista[]);
 void qry_i(FILE*, FILE*, FILE*, Lista);
 void qry_o(FILE*, FILE*, FILE*, Lista);
 void qry_d(FILE*, FILE*, FILE*, Lista);
-void qry_bb(char[], Lista, char[], char[], FILE*);
+void qry_bb(char[], Lista[], char[], char[], FILE*);
 
 #endif

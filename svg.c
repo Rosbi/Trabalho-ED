@@ -153,16 +153,13 @@ void finalize_svg(char nameOut[]){
 
 void draw_svg(Lista listasObjetos[], FILE* out){
   Item temp;
-  char cc[7];
   int contLista;
-
-  fgets(cc, 7, out);
 
   for(int i=0;i<6;i++){
   contLista = 1;
     while(1){
       temp = getItem(listasObjetos[i], contLista);
-      if(temp){
+      if(temp!=NULL){
         switch(i){
           case 0:
             formaDraw(temp, out);

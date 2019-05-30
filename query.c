@@ -7,7 +7,7 @@
 #include"formasBase.h"
 #include"lista.h"
 
-void qry_bb(char[], Lista, char[], char[], FILE*);
+void qry_bb(char[], Lista[], char[], char[], FILE*);
 void qry_i(FILE*, FILE*, FILE*, Lista);
 void qry_o(FILE*, FILE*, FILE*, Lista);
 void qry_d(FILE*, FILE*, FILE*, Lista);
@@ -66,19 +66,22 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char n
     nConsulta = strtok(tempName, ".");
     //strtok(nConsulta, ".");
   }
-  querryOut = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+10));
+  querryOut = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+10));//printf("%s\n", nConsulta);fflush(stdout);//
   sprintf(querryOut, "%s/%s-%s.svg", dDir, tnArq, nConsulta);
-  fQryOutSvg = fopen(querryOut, "w");
-  tempName = querryOut;
+  create_svg(querryOut);
+  fQryOutSvg = fopen(querryOut, "a+");
+  tempName = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+10));
+  sprintf(tempName, "%s/%s-%s.txt", dDir, tnArq, nConsulta);//printf("%s\n", tempName);fflush(stdout);//
+  /*tempName = querryOut;
   querryOut = strtok(tempName, ".");
   //strtok(querryOut, ".");
-  sprintf(querryOut, "%s.txt", querryOut);
-  fQryOutTxt = fopen(querryOut, "w");
+  sprintf(querryOut, "%s.txt", querryOut);*/
+  fQryOutTxt = fopen(tempName, "w");
 
   while(!feof(fQryIn)){
-    fscanf(fQryIn, "%s ", qTipo);
+    fscanf(fQryIn, "%s ", qTipo);//printf("%s\n", qTipo);
     if(strcmp(qTipo, "bb")==0){
-      qry_bb(dDir, listasObjetos[0], tnArq, nConsulta, fQryIn);
+      qry_bb(dDir, listasObjetos, tnArq, nConsulta, fQryIn);
     }
     else if(strcmp(qTipo, "i?")==0){
       qry_i(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos[0]);
@@ -91,36 +94,35 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char n
     }
   }
 
-  fseek(fQryOutSvg, 0, SEEK_SET);
   draw_svg(listasObjetos, fQryOutSvg);
 
   fclose(fQryOutTxt);
   fclose(fQryOutSvg);
+  finalize_svg(querryOut);
   fclose(fQryIn);
 }
 
-void qry_bb(char dDir[], Lista listaCR, char tnArq[], char nConsulta[], FILE* fQryIn){
+void qry_bb(char dDir[], Lista listaCR[], char tnArq[], char nConsulta[], FILE* fQryIn){
   Item aux;
   FILE* bbOut;
   char* nOut;
   int contLista = 1;
   float r, w, h, x, y;
   char itemTipo, cor[22], sufixo[21];
+  fscanf(fQryIn, "%s %s ", sufixo, cor);
 
   nOut = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+strlen(sufixo)+5));  //Aloca para nOut o (tamanho de dDir + tnArq + sufixo + sufixo + ".svg" + 1) * sizeof(char)
   sprintf(nOut, "%s/%s-%s-%s.svg", dDir, tnArq, nConsulta, sufixo);
-  bbOut = fopen(nOut, "w");
+  create_svg(nOut);
+  bbOut = fopen(nOut, "a");
   if(!bbOut){
     printf("ERRO AO CRIAR ARQUIVO DE CONSULTA bb\n");
     exit(-1);
   }
-
-  fscanf(fQryIn, "%s %s ", sufixo, cor);
-
-  fprintf(bbOut, "<svg>\n");
+  draw_svg(listaCR, bbOut);
 
   while(1){
-    aux = getItem(listaCR, contLista);
+    aux = getItem(listaCR[0], contLista);
     if(aux!=NULL)
       formaDraw(aux, bbOut);
     else
@@ -130,7 +132,7 @@ void qry_bb(char dDir[], Lista listaCR, char tnArq[], char nConsulta[], FILE* fQ
 
   contLista = 1;
   while(1){
-    aux = getItem(listaCR, contLista);
+    aux = getItem(listaCR[0], contLista);
     if(aux!=NULL){
       itemTipo = formaGetTipo(aux);
       switch(itemTipo){
@@ -154,10 +156,10 @@ void qry_bb(char dDir[], Lista listaCR, char tnArq[], char nConsulta[], FILE* fQ
     contLista++;
   }
 
-  fprintf(bbOut, "</svg>");
+  fclose(bbOut);
+  finalize_svg(nOut);
 
   free(nOut);
-  fclose(bbOut);
 }
 
 void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
@@ -166,7 +168,7 @@ void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   int j, contLista = 1;
   char tipo;
 
-  fscanf(fqIn, "%d %f %f", &j, &x, &y);
+  fscanf(fqIn, "%d %f %f ", &j, &x, &y);
   fprintf(fqOutTxt, "i? %d %f %f\n", j, x, y);
 
   while(1){
@@ -231,8 +233,8 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   char tipo[2];
   bool sob;
 
-  fscanf(fqIn, "o? %d %d", &j, &k);
-  fprintf(fqOutTxt, "%d %d\n", j, k);
+  fscanf(fqIn, "%d %d ", &j, &k);
+  fprintf(fqOutTxt, "o? %d %d\n", j, k);
 
   while(1){
     aux1 = getItem(listaCR, contLista);
@@ -240,18 +242,23 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
       if(formaGetID(aux1) == j)
         break;
     }
-    else
+    else{
+      //printf("i\n");fflush(stdout);
       break;
+    }
     contLista++;
   }
+  contLista = 1;
   while(1){
     aux2 = getItem(listaCR, contLista);
     if(aux2 != NULL){
       if(formaGetID(aux2) == k)
         break;
     }
-    else
+    else{
+      //printf("j\n");fflush(stdout);
       break;
+    }
     contLista++;
   }
 
@@ -278,8 +285,8 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
             sob = true;
         }
         else{                                     //Se as figuras forem um circulo e um retangulo
-          wForma[1] = formaGetR(aux2);
-          hForma[1] = formaGetR(aux2);
+          wForma[1] = formaGetW(aux2);
+          hForma[1] = formaGetH(aux2);
           if((xForma[0] > xForma[1] && xForma[0] < xForma[1]+wForma[1]) && (yForma[0] > yForma[1] && yForma[0] < yForma[1]+hForma[1]))    //Verifica se o centro do circulo esta dentro do retangulo
             sob = true;
           else{
@@ -290,16 +297,16 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
               sob = true;
             else
               sob = false;
-            x1 = func_min(xForma[0] - rForma[0], xForma[1]);
-            y1 = func_min(yForma[0] - rForma[0], yForma[1]);
-            x2 = func_max(xForma[0] + rForma[0], xForma[1] + wForma[1]);
-            y2 = func_max(yForma[0] + rForma[0], yForma[1] + yForma[1]);
           }
+          x1 = func_min(xForma[0] - rForma[0], xForma[1]);
+          y1 = func_min(yForma[0] - rForma[0], yForma[1]);
+          x2 = func_max(xForma[0] + rForma[0], xForma[1] + wForma[1]);
+          y2 = func_max(yForma[0] + rForma[0], yForma[1] + hForma[1]);
         }
         break;
       case 'r':
-        wForma[0] = formaGetR(aux1);
-        hForma[0] = formaGetR(aux1);
+        wForma[0] = formaGetW(aux1);
+        hForma[0] = formaGetH(aux1);
         if(tipo[1] == 'c'){                    //Se as figuras forem um retangulo e um circulo
           rForma[1] = formaGetR(aux2);
           if((xForma[1] > xForma[0] && xForma[1] < xForma[0]+wForma[0]) && (yForma[1] > yForma[0] && yForma[1] < yForma[0]+hForma[0]))    //Verifica se o centro do circulo esta dentro do retangulo
@@ -312,15 +319,15 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
               sob = true;
             else
               sob = false;
-            x1 = func_min(xForma[1] - rForma[1], xForma[0]);
-            y1 = func_min(yForma[1] - rForma[1], yForma[0]);
-            x2 = func_max(xForma[1] + rForma[1], xForma[0] + wForma[0]);
-            y2 = func_max(yForma[1] + rForma[1], yForma[0] + hForma[0]);
           }
+          x1 = func_min(xForma[1] - rForma[1], xForma[0]);
+          y1 = func_min(yForma[1] - rForma[1], yForma[0]);
+          x2 = func_max(xForma[1] + rForma[1], xForma[0] + wForma[0]);
+          y2 = func_max(yForma[1] + rForma[1], yForma[0] + hForma[0]);
         }
         else{                                     //Se as figuras forem dois retangulos
-          wForma[1] = formaGetR(aux2);
-          hForma[1] = formaGetR(aux2);
+          wForma[1] = formaGetW(aux2);
+          hForma[1] = formaGetH(aux2);
           x1 = func_min(xForma[0], xForma[1]);
           y1 = func_min(yForma[0], yForma[1]);
           x2 = func_max(xForma[0] + wForma[0], xForma[1] + wForma[1]);
@@ -335,11 +342,11 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
         break;
     }
     if(sob){                                                          //caso as figuras se sobreponham, desenha um retangulo verde ao redor das duas
-      draw_r(x1-x2, y1-y2, x1, y1, "green", "black", 1.0, 0.0, fqOutSvg);
+      draw_r(abs(x1-x2), abs(y1-y2), x1, y1, "green", "black", 1.0, 0.0, fqOutSvg);
       fprintf(fqOutTxt, "SIM\n\n");
     }
     else{                                                             //caso contrário, desenha um retangulo tracejado azul
-      draw_r_dash(x1-x2, y1-y2, x1, y1, "blue", fqOutSvg);
+      draw_r_dash(abs(x1-x2), abs(y1-y2), x1, y1, "blue", fqOutSvg);
       fprintf(fqOutTxt, "NAO\n\n");
     }
   }
@@ -354,7 +361,7 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   char dis[40], tipo[2];
   Item aux1, aux2;
 
-  fscanf(fqIn, "%d %d", &j, &k);
+  fscanf(fqIn, "%d %d ", &j, &k);
   fprintf(fqOutTxt, "d? %d %d\n", j, k);
 
   while(1){
@@ -367,6 +374,7 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
       break;
     contLista++;
   }
+  contLista = 1;
   while(1){
     aux2 = getItem(listaCR, contLista);
     if(aux2 != NULL){
