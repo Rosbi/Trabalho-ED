@@ -8,17 +8,17 @@ struct hidrante{
   char ID[15];
   char corStroke[22];
   char corFill[22];
-  float strkW;
-  float x;
-  float y;
+  double strkW;
+  double x;
+  double y;
 };
 
 static char cor1[22] = "magenta";
 static char cor2[22] = "black";
-static float stroke = 1.0;
-static float radius = 5.0;
+static double stroke = 1.0;
+static double radius = 5.0;
 
-ItemHidrante hidranteNew(char id[], float x, float y, int* sizeofItem){
+ItemHidrante hidranteNew(char id[], double x, double y, int* sizeofItem){
   struct hidrante *essa = malloc(sizeof(struct hidrante));
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
@@ -43,7 +43,7 @@ void hidranteSetCorstroke(char pCor[]){
 void hidranteSetCorfill(char pCor[]){
   strcpy(cor2, pCor);
 }
-void hidranteSetStroke(float pStroke){
+void hidranteSetStroke(double pStroke){
   stroke = pStroke;
 }
 
@@ -51,11 +51,11 @@ char* hidranteGetId(ItemHidrante item){
   struct hidrante *essa = item;
   return essa->ID;
 }
-float hidranteGetX(ItemHidrante item){
+double hidranteGetX(ItemHidrante item){
   struct hidrante *essa = item;
   return essa->x;
 }
-float hidranteGetY(ItemHidrante item){
+double hidranteGetY(ItemHidrante item){
   struct hidrante *essa = item;
   return essa->y;
 }
@@ -64,11 +64,11 @@ void hidranteSetID(ItemHidrante item, char pId[]){
   struct hidrante *essa = item;
   strcpy(essa->ID, pId);
 }
-void hidranteSetX(ItemHidrante item, float pX){
+void hidranteSetX(ItemHidrante item, double pX){
   struct hidrante *essa = item;
   essa->x = pX;
 }
-void hidranteSetY(ItemHidrante item, float pY){
+void hidranteSetY(ItemHidrante item, double pY){
   struct hidrante *essa = item;
   essa->y = pY;
 }

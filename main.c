@@ -6,7 +6,7 @@
 #include"lista.h"
 
 int main(int argc, char *argv[]){
-  Lista listasObjetos[6];   //o vetor representa respectivamente as listas de circulos/retangulos, quadras, hidrantes, semaforos, torres e textos
+  Lista listasObjetos[8];   //o vetor representa respectivamente as listas de circulos/retangulos, quadras, hidrantes, semaforos, torres, predios, muros e textos
   int i=1;
 
   char *nArqGeo = NULL; //nome do Arquivo Geo

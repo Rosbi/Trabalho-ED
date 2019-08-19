@@ -8,18 +8,18 @@ struct semaforo{
   char ID[15];
   char corStroke[22];
   char corFill[22];
-  float strkW;
-  float x;
-  float y;
+  double strkW;
+  double x;
+  double y;
 };
 
 static char cor1[22] = "magenta";
 static char cor2[22] = "green";
-static float stroke = 1.0;
-static float width = 10.0;
-static float height = 20.0;
+static double stroke = 1.0;
+static double width = 10.0;
+static double height = 20.0;
 
-ItemSemaforo semaforoNew(char id[], float x, float y, int* sizeofItem){
+ItemSemaforo semaforoNew(char id[], double x, double y, int* sizeofItem){
   struct semaforo *essa = malloc(sizeof(struct semaforo));
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
@@ -44,7 +44,7 @@ void semaforoSetCorstroke(char pCor[]){
 void semaforoSetCorfill(char pCor[]){
   strcpy(cor2, pCor);
 }
-void semaforoSetStroke(float pStroke){
+void semaforoSetStroke(double pStroke){
   stroke = pStroke;
 }
 
@@ -52,11 +52,11 @@ char* semaforoGetId(ItemSemaforo item){
   struct semaforo *essa = item;
   return essa->ID;
 }
-float semaforoGetX(ItemSemaforo item){
+double semaforoGetX(ItemSemaforo item){
   struct semaforo *essa = item;
   return essa->x;
 }
-float semaforoGetY(ItemSemaforo item){
+double semaforoGetY(ItemSemaforo item){
   struct semaforo *essa = item;
   return essa->y;
 }
@@ -65,11 +65,11 @@ void semaforoSetID(ItemSemaforo item, char pId[]){
   struct semaforo *essa = item;
   strcpy(essa->ID, pId);
 }
-void semaforoSetX(ItemSemaforo item, float pX){
+void semaforoSetX(ItemSemaforo item, double pX){
   struct semaforo *essa = item;
   essa->x = pX;
 }
-void semaforoSetY(ItemSemaforo item, float pY){
+void semaforoSetY(ItemSemaforo item, double pY){
   struct semaforo *essa = item;
   essa->y = pY;
 }

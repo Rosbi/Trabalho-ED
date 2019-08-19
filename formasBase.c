@@ -9,18 +9,18 @@ struct formaBase{
   char corStroke[22];
   char corFill[22];
   char text[255];
-  float strkW;
-  float x;
-  float y;
-  float r;
-  float w;
-  float h;
+  double strkW;
+  double x;
+  double y;
+  double r;
+  double w;
+  double h;
 };
 
-static float strokeC = 1.0;
-static float strokeR = 1.0;
+static double strokeC = 1.0;
+static double strokeR = 1.0;
 
-Forma retanguloNew(int i, float x, float y, float w, float h, char cor1[], char cor2[], int* sizeofItem){
+Forma retanguloNew(int i, double x, double y, double w, double h, char cor1[], char cor2[], int* sizeofItem){
   struct formaBase *essa = malloc(sizeof(struct formaBase));
   essa->tipo = 'r';
   essa->i = i;
@@ -35,7 +35,7 @@ Forma retanguloNew(int i, float x, float y, float w, float h, char cor1[], char 
 
   return essa;
 }
-Forma circuloNew(int i, float x, float y, float r, char cor1[], char cor2[], int* sizeofItem){
+Forma circuloNew(int i, double x, double y, double r, char cor1[], char cor2[], int* sizeofItem){
   struct formaBase *essa = malloc(sizeof(struct formaBase));
   essa->tipo = 'c';
   essa->i = i;
@@ -49,7 +49,7 @@ Forma circuloNew(int i, float x, float y, float r, char cor1[], char cor2[], int
 
   return essa;
 }
-Forma textoNew(char text[], float x, float y, int* sizeofItem){
+Forma textoNew(char text[], double x, double y, int* sizeofItem){
   struct formaBase *essa = malloc(sizeof(struct formaBase));
   essa->tipo = 't';
   essa->x = x;
@@ -75,30 +75,30 @@ void formaDraw(Forma form, FILE* dir){
   }
 }
 
-void formaSetStroke(float pStrokeC, float pStrokeR){
+void formaSetStroke(double pStrokeC, double pStrokeR){
   strokeC = pStrokeC;
   strokeR = pStrokeR;
 }
 
-void formaSetX(Forma form, float pX){
+void formaSetX(Forma form, double pX){
   struct formaBase *essa = form;
   essa->x = pX;
 }
-void formaSetY(Forma form, float pY){
+void formaSetY(Forma form, double pY){
   struct formaBase *essa = form;
   essa->y = pY;
 }
-void formaSetW(Forma form, float pW){
+void formaSetW(Forma form, double pW){
   struct formaBase *essa = form;
   if(essa->tipo == 'r')
     essa->w = pW;
 }
-void formaSetH(Forma form, float pH){
+void formaSetH(Forma form, double pH){
   struct formaBase *essa = form;
   if(essa->tipo == 'r')
     essa->h = pH;
 }
-void formaSetR(Forma form, float pR){
+void formaSetR(Forma form, double pR){
   struct formaBase *essa = form;
   if(essa->tipo == 'c')
     essa->r = pR;
@@ -112,29 +112,29 @@ void formaSetCorfill(Forma form, char pCor[]){
   strcpy(essa->corFill, pCor);
 }
 
-float formaGetX(Forma form){
+double formaGetX(Forma form){
   struct formaBase *essa = form;
   return essa->x;
 }
-float formaGetY(Forma form){
+double formaGetY(Forma form){
   struct formaBase *essa = form;
   return essa->y;
 }
-float formaGetR(Forma form){
+double formaGetR(Forma form){
   struct formaBase *essa = form;
   if(essa->tipo == 'c')
     return essa->r;
   else
     return -1;
 }
-float formaGetW(Forma form){
+double formaGetW(Forma form){
   struct formaBase *essa = form;
   if(essa->tipo == 'r')
     return essa->w;
   else
     return -1;
 }
-float formaGetH(Forma form){
+double formaGetH(Forma form){
   struct formaBase *essa = form;
   if(essa->tipo == 'r')
     return essa->h;
@@ -158,21 +158,21 @@ char* formaGetTexto(Forma form){
     return essa->text;
 }
 
-void draw_r(float w, float h, float x, float y, char cor1[], char cor2[], float stroke, float opacity, FILE* dir){
+void draw_r(double w, double h, double x, double y, char cor1[], char cor2[], double stroke, double opacity, FILE* dir){
   fprintf(dir, "\t<rect width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" stroke=\"%s\" fill=\"%s\" stroke-width=\"%f\" fill-opacity=\"%f\"/>\n", w, h, x, y, cor1, cor2, stroke, opacity);
 }
-void draw_c(float r, float x, float y, char cor1[], char cor2[], float stroke, float opacity, FILE* dir){
+void draw_c(double r, double x, double y, char cor1[], char cor2[], double stroke, double opacity, FILE* dir){
   fprintf(dir, "\t<circle r=\"%f\" cx=\"%f\" cy=\"%f\" stroke=\"%s\" fill=\"%s\" stroke-width=\"%f\" fill-opacity=\"%f\"/>\n", r, x, y, cor1, cor2, stroke, opacity);
 }
-void draw_e(float x, float y, float rx, float ry, char cor1[], char cor2[], float opacity, FILE* dir){
+void draw_e(double x, double y, double rx, double ry, char cor1[], char cor2[], double opacity, FILE* dir){
   fprintf(dir, "\t<ellipse cx=\"%f\" cy=\"%f\" rx=\"%f\" ry=\"%f\" stroke=\"%s\" fill=\"%s\" stroke-width=\"0.5\" fill-opacity=\"%f\"/>\n", x, y, rx, ry, cor1, cor2, opacity);
 }
-void draw_r_dash(float w, float h, float x, float y, char cor[], FILE* dir){
+void draw_r_dash(double w, double h, double x, double y, char cor[], FILE* dir){
   fprintf(dir, "\t<rect width=\"%f\" height=\"%f\" x=\"%f\" y=\"%f\" stroke=\"%s\" fill=\"white\" stroke-width=\"0.5\" stroke-dasharray=\"5,5\" fill-opacity=\"0.0\"/>\n", w, h, x, y, cor);
 }
-void draw_l(float x1, float y1, float x2, float y2, char cor[], FILE *dir){
+void draw_l(double x1, double y1, double x2, double y2, char cor[], FILE *dir){
   fprintf(dir, "\t<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke=\"%s\" stroke-width=\"1\"/>\n", x1, y1, x2, y2, cor);
 }
-void draw_t(float x, float y, char texto[], FILE* dir){
+void draw_t(double x, double y, char texto[], FILE* dir){
   fprintf(dir, "\t<text x=\"%f\" y=\"%f\" fill=\"black\" font-size=\"6\">%s\t</text>\n", x, y, texto);
 }

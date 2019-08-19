@@ -5,21 +5,21 @@
 #include"formasBase.h"
 
 struct quadra{
-  char cep[15];
+  char cep[20];
   char corStroke[22];
   char corFill[22];
-  float strkW;
-  float x;
-  float y;
-  float w;
-  float h;
+  double strkW;
+  double x;
+  double y;
+  double w;
+  double h;
 };
 
 static char cor1[22] = "magenta";
 static char cor2[22] = "black";
-static float stroke = 1.0;
+static double stroke = 1.0;
 
-ItemQuadra quadraNew(float x, float y, float w, float h, char cep[], int* sizeofItem){
+ItemQuadra quadraNew(double x, double y, double w, double h, char cep[], int* sizeofItem){
   struct quadra *essa = malloc(sizeof(struct quadra));
   strcpy(essa->cep, cep);
   essa->x = x;
@@ -46,7 +46,7 @@ void quadraSetCorstroke(char pCor[]){
 void quadraSetCorfill(char pCor[]){
   strcpy(cor2, pCor);
 }
-void quadraSetStroke(float pStr){
+void quadraSetStroke(double pStr){
   stroke = pStr;
 }
 
@@ -54,19 +54,19 @@ char* quadraGetCep(ItemQuadra item){
   struct quadra *essa = item;
   return essa->cep;
 }
-float quadraGetX(ItemQuadra item){
+double quadraGetX(ItemQuadra item){
   struct quadra *essa = item;
   return essa->x;
 }
-float quadraGetY(ItemQuadra item){
+double quadraGetY(ItemQuadra item){
   struct quadra *essa = item;
   return essa->y;
 }
-float quadraGetW(ItemQuadra item){
+double quadraGetW(ItemQuadra item){
   struct quadra *essa = item;
   return essa->w;
 }
-float quadraGetH(ItemQuadra item){
+double quadraGetH(ItemQuadra item){
   struct quadra *essa = item;
   return essa->h;
 }
@@ -75,19 +75,19 @@ void quadraSetCep(ItemQuadra item, char pCep[]){
   struct quadra *essa = item;
   strcpy(essa->cep, pCep);
 }
-void quadraSetX(ItemQuadra item, float pX){
+void quadraSetX(ItemQuadra item, double pX){
   struct quadra *essa = item;
   essa->x = pX;
 }
-void quadraSetY(ItemQuadra item, float pY){
+void quadraSetY(ItemQuadra item, double pY){
   struct quadra *essa = item;
   essa->y = pY;
 }
-void quadraSetW(ItemQuadra item, float pW){
+void quadraSetW(ItemQuadra item, double pW){
   struct quadra *essa = item;
   essa->w = pW;
 }
-void quadraSetH(ItemQuadra item, float pH){
+void quadraSetH(ItemQuadra item, double pH){
   struct quadra *essa = item;
   essa->h = pH;
 }

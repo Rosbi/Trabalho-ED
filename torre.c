@@ -8,17 +8,17 @@ struct torre{
   char ID[15];
   char corStroke[22];
   char corFill[22];
-  float strkW;
-  float x;
-  float y;
+  double strkW;
+  double x;
+  double y;
 };
 
 static char cor1[22] = "magenta";
 static char cor2[22] = "black";
-static float stroke = 1.0;
-static float radius = 5.0;
+static double stroke = 1.0;
+static double radius = 5.0;
 
-ItemTorre torreNew(char id[], float x, float y, int* sizeofItem){
+ItemTorre torreNew(char id[], double x, double y, int* sizeofItem){
   struct torre *essa = malloc(sizeof(struct torre));
   strcpy(essa->corStroke, cor1);
   strcpy(essa->corFill, cor2);
@@ -43,7 +43,7 @@ void torreSetCorstroke(char pCor[]){
 void torreSetCorfill(char pCor[]){
   strcpy(cor2, pCor);
 }
-void torreSetStroke(float pStroke){
+void torreSetStroke(double pStroke){
   stroke = pStroke;
 }
 
@@ -51,11 +51,11 @@ char* torreGetId(ItemTorre item){
   struct torre *essa = item;
   return essa->ID;
 }
-float torreGetX(ItemTorre item){
+double torreGetX(ItemTorre item){
   struct torre *essa = item;
   return essa->x;
 }
-float torreGetY(ItemTorre item){
+double torreGetY(ItemTorre item){
   struct torre *essa = item;
   return essa->y;
 }
@@ -64,11 +64,11 @@ void torreSetID(ItemTorre item, char pId[]){
   struct torre *essa = item;
   strcpy(essa->ID, pId);
 }
-void torreSetX(ItemTorre item, float pX){
+void torreSetX(ItemTorre item, double pX){
   struct torre *essa = item;
   essa->x = pX;
 }
-void torreSetY(ItemTorre item, float pY){
+void torreSetY(ItemTorre item, double pY){
   struct torre *essa = item;
   essa->y = pY;
 }

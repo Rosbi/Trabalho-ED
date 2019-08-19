@@ -5,20 +5,20 @@
 
 typedef void* ItemHidrante;
 
-ItemHidrante hidranteNew(char[], float, float, int*);
+ItemHidrante hidranteNew(char[], double, double, int*);
 
 void hidranteDraw(ItemHidrante, FILE*);
 
 void hidranteSetCorstroke(char[]);
 void hidranteSetCorfill(char[]);
-void hidranteSetStroke(float);
+void hidranteSetStroke(double);
 
 char* hidranteGetId(ItemHidrante);
-float hidranteGetX(ItemHidrante);
-float hidranteGetY(ItemHidrante);
+double hidranteGetX(ItemHidrante);
+double hidranteGetY(ItemHidrante);
 
 void hidranteSetID(ItemHidrante, char[]);
-void hidranteSetX(ItemHidrante, float);
-void hidranteSetY(ItemHidrante, float);
+void hidranteSetX(ItemHidrante, double);
+void hidranteSetY(ItemHidrante, double);
 
 #endif

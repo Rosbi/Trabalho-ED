@@ -5,20 +5,20 @@
 
 typedef void* ItemTorre;
 
-ItemTorre torreNew(char[], float, float, int*);
+ItemTorre torreNew(char[], double, double, int*);
 
 void torreDraw(ItemTorre, FILE*);
 
 void torreSetCorstroke(char[]);
 void torreSetCorfill(char[]);
-void torreSetStroke(float);
+void torreSetStroke(double);
 
 char* torreGetId(ItemTorre);
-float torreGetX(ItemTorre);
-float torreGetY(ItemTorre);
+double torreGetX(ItemTorre);
+double torreGetY(ItemTorre);
 
 void torreSetID(ItemTorre, char[]);
-void torreSetX(ItemTorre, float);
-void torreSetY(ItemTorre, float);
+void torreSetX(ItemTorre, double);
+void torreSetY(ItemTorre, double);
 
 #endif

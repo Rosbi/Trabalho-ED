@@ -5,20 +5,20 @@
 
 typedef void* ItemSemaforo;
 
-ItemSemaforo semaforoNew(char[], float, float, int*);
+ItemSemaforo semaforoNew(char[], double, double, int*);
 
 void semaforoDraw(ItemSemaforo, FILE*);
 
 void semaforoSetCorstroke(char[]);
 void semaforoSetCorfill(char[]);
-void semaforoSetStroke(float);
+void semaforoSetStroke(double);
 
 char* semaforoGetId(ItemSemaforo);
-float semaforoGetX(ItemSemaforo);
-float semaforoGetY(ItemSemaforo);
+double semaforoGetX(ItemSemaforo);
+double semaforoGetY(ItemSemaforo);
 
 void semaforoSetID(ItemSemaforo, char[]);
-void semaforoSetX(ItemSemaforo, float);
-void semaforoSetY(ItemSemaforo, float);
+void semaforoSetX(ItemSemaforo, double);
+void semaforoSetY(ItemSemaforo, double);
 
 #endif

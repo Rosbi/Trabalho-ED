@@ -12,20 +12,20 @@
 #include"lista.h"
 #include"query.h"
 
-float func_min(float a, float b){
+double func_min(double a, double b){
   if(a>b)
     return b;
   else
     return a;
 }
-float func_max(float a, float b){
+double func_max(double a, double b){
   if(a>b)
     return a;
   else
     return b;
 }
 
-bool metricaL1(float r1, float x1, float y1, float x2, float y2, float w2, float h2){
+bool metricaL1(double r1, double x1, double y1, double x2, double y2, double w2, double h2){
     if(fabs(x2-x1)+fabs(y2-y1) <= r1){
         if(fabs((x2+w2)-x1)+fabs(y2-y1)<=r1){
             if(fabs(x2-x1)+fabs((y2+h2)-y1)<=r1){
@@ -40,7 +40,7 @@ bool metricaL1(float r1, float x1, float y1, float x2, float y2, float w2, float
     }
     return false;
 }
-bool metricaL2(float r1, float x1, float y1, float x2, float y2, float w2, float h2){
+bool metricaL2(double r1, double x1, double y1, double x2, double y2, double w2, double h2){
   if(sqrt(pow((x2-x1),2)+pow((y2-y1),2)) <= r1){
       if(sqrt(pow(((x2+w2)-x1),2)+pow((y2-y1),2)) <= r1){
           if(sqrt(pow((x2-x1),2)+pow(((y2+h2)-y1),2)) <= r1){
@@ -55,14 +55,14 @@ bool metricaL2(float r1, float x1, float y1, float x2, float y2, float w2, float
   }
   return false;
 }
-bool SqrTotalOverSqr(float xs, float ys, float ws, float hs, float x, float y, float w, float h){
+bool SqrTotalOverSqr(double xs, double ys, double ws, double hs, double x, double y, double w, double h){
   if(x>xs && y>ys && (x+w)<(xs+ws) && (y+h)<(ys+hs))
     return true;
   else
     return false;
 }
-bool CirTotalOverSqr(float xc, float yc, float r, float xs, float ys, float w, float h){
-  float dist1, dist2, dist3, dist4, x1, y1;
+bool CirTotalOverSqr(double xc, double yc, double r, double xs, double ys, double w, double h){
+  double dist1, dist2, dist3, dist4, x1, y1;
 
     dist1 = sqrt(pow(xc-xs, 2)+pow(yc-ys, 2));
     dist2 = sqrt(pow(xc-(xs+w), 2)+pow(yc-ys, 2));
@@ -171,7 +171,7 @@ void qry_bb(char dDir[], Lista listaCR[], char tnArq[], char nConsulta[], FILE* 
   FILE* bbOut;
   char* nOut;
   int contLista = 1;
-  float r, w, h, x, y;
+  double r, w, h, x, y;
   char itemTipo, cor[22], sufixo[21];
   fscanf(fQryIn, "%s %s ", sufixo, cor);
 
@@ -227,12 +227,12 @@ void qry_bb(char dDir[], Lista listaCR[], char tnArq[], char nConsulta[], FILE* 
 }
 void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   Item aux;
-  float x, y, dist, xForma, yForma, rForma, wForma, hForma;
+  double x, y, dist, xForma, yForma, rForma, wForma, hForma;
   int j, contLista = 1;
   char tipo;
 
-  fscanf(fqIn, "%d %f %f ", &j, &x, &y);
-  fprintf(fqOutTxt, "i? %d %f %f\n", j, x, y);
+  fscanf(fqIn, "%d %lf %lf ", &j, &x, &y);
+  fprintf(fqOutTxt, "i? %d %lf %lf\n", j, x, y);
 
   while(1){
     aux = getItem(listaCR, contLista);
@@ -289,9 +289,9 @@ void qry_i(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
 void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   Item aux1, aux2;
   int j, k, contLista=1;
-  float dist;
-  float x1, y1, x2, y2;
-  float xForma[2], yForma[2], rForma[2], wForma[2], hForma[2];
+  double dist;
+  double x1, y1, x2, y2;
+  double xForma[2], yForma[2], rForma[2], wForma[2], hForma[2];
   char tipo[2];
   bool sob;
 
@@ -417,8 +417,8 @@ void qry_o(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
 }
 void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
   int j, k, contLista=1;
-  float dist;
-  float xForma[2], yForma[2], wForma[2], hForma[2], rForma[2];
+  double dist;
+  double xForma[2], yForma[2], wForma[2], hForma[2], rForma[2];
   char dis[40], tipo[2];
   Item aux1, aux2;
 
@@ -461,7 +461,7 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
           rForma[1] = formaGetR(aux2);
           dist = sqrt(pow(xForma[0]-xForma[1], 2) + pow(yForma[0]-yForma[1], 2));
           draw_l(xForma[0], yForma[0], xForma[1], yForma[1], "black", fqOutSvg);
-          sprintf(dis, "%f", dist);
+          sprintf(dis, "%lf", dist);
           draw_t((xForma[0] + xForma[1])/2, (yForma[0] + yForma[1])/2, dis, fqOutSvg);
         }
         else{
@@ -469,10 +469,10 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
           hForma[1] = formaGetH(aux2);
           dist = sqrt(pow(xForma[0]-(xForma[1]+wForma[1]/2), 2) + pow(yForma[0]-(yForma[1]+hForma[1]/2), 2));
           draw_l(xForma[0], yForma[0], xForma[1]+wForma[1]/2, yForma[1]+hForma[1]/2, "black", fqOutSvg);
-          sprintf(dis, "%f", dist);
+          sprintf(dis, "%lf", dist);
           draw_t((xForma[0] + xForma[1]+wForma[1]/2)/2, (yForma[0] + yForma[1]+hForma[1]/2)/2, dis, fqOutSvg);
         }
-        fprintf(fqOutTxt, "%f\n\n", dist);
+        fprintf(fqOutTxt, "%lf\n\n", dist);
         break;
       case 'r':
         wForma[0] = formaGetW(aux1);
@@ -481,7 +481,7 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
           rForma[1] = formaGetR(aux2);
           dist = sqrt(pow((xForma[0]+wForma[0]/2)-xForma[1], 2) + pow((yForma[0]+hForma[0]/2)-yForma[1], 2));
           draw_l(xForma[0] + wForma[0]/2, yForma[0] + hForma[0]/2, xForma[1], yForma[1], "black", fqOutSvg);
-          sprintf(dis, "%f", dist);
+          sprintf(dis, "%lf", dist);
           draw_t((xForma[0]+wForma[0]/2 + xForma[1])/2, (yForma[0]+hForma[0]/2 + yForma[1])/2, dis, fqOutSvg);
         }
         else{
@@ -489,10 +489,10 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
           hForma[1] = formaGetH(aux2);
           dist = sqrt(pow((xForma[0]+wForma[0]/2)-(xForma[1]+wForma[1]/2), 2) + pow((yForma[0]+hForma[0]/2)-(yForma[1]+hForma[1]/2), 2));
           draw_l(xForma[0] + wForma[0]/2, yForma[0] + hForma[0]/2, xForma[1]+wForma[1]/2, yForma[1]+hForma[1]/2, "black", fqOutSvg);
-          sprintf(dis, "%f", dist);
+          sprintf(dis, "%lf", dist);
           draw_t((xForma[0]+wForma[0]/2 + xForma[1]+wForma[1]/2)/2, (yForma[0]+hForma[0]/2 + yForma[1]+hForma[1]/2)/2, dis, fqOutSvg);
         }
-        fprintf(fqOutTxt, "%f\n\n", dist);
+        fprintf(fqOutTxt, "%lf\n\n", dist);
         break;
     }
   }
@@ -503,15 +503,15 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
 void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
   Item aux;
   int contLista=1;
-  float x, y, r, ax, ay, aw, ah;
+  double x, y, r, ax, ay, aw, ah;
   char id[50], tipoObjeto[2], metrica[3];
   bool encontrado = false;
 
   fscanf(fqIn, "%s ", metrica);
   fgets(tipoObjeto, 2, fqIn);
   fseek(fqIn, -1, SEEK_CUR);
-  fscanf(fqIn, "%s %f ", id, &r);
-  fprintf(fqOutTxt, "dq %s %s %f\n", metrica, id, r);
+  fscanf(fqIn, "%s %lf ", id, &r);
+  fprintf(fqOutTxt, "dq %s %s %lf\n", metrica, id, r);
 
   switch(tipoObjeto[0]){
     case 'h':
@@ -522,7 +522,7 @@ void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
             x = hidranteGetX(aux);
             y = hidranteGetY(aux);
             encontrado = true;
-            fprintf(fqOutTxt, "Hidrante: %f %f\n", x, y);
+            fprintf(fqOutTxt, "Hidrante: %lf %lf\n", x, y);
             draw_c(8, hidranteGetX(aux), hidranteGetY(aux), "magenta", "magenta", 0.5, 1.0, fqOutSvg);
           }
         }
@@ -539,7 +539,7 @@ void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
             x = semaforoGetX(aux);
             y = semaforoGetY(aux);
             encontrado = true;
-            fprintf(fqOutTxt, "Semaforo: %f %f\n", x, y);
+            fprintf(fqOutTxt, "Semaforo: %lf %lf\n", x, y);
             draw_r(13, 23, semaforoGetX(aux)-1.5, semaforoGetY(aux)-1.5, "magenta", "magenta", 0.5, 1.0, fqOutSvg);
           }
         }
@@ -556,7 +556,7 @@ void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
             x = torreGetX(aux);
             y = torreGetY(aux);
             encontrado = true;
-            fprintf(fqOutTxt, "Torre de Radio: %f %f\n", x, y);
+            fprintf(fqOutTxt, "Torre de Radio: %lf %lf\n", x, y);
             draw_c(8, x, y, "magenta", "magenta", 0.5, 1.0, fqOutSvg);
             draw_l(x, y, x, y+7, "magenta", fqOutSvg);
           }
@@ -598,7 +598,7 @@ void qry_del(FILE *fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
   char tipoObjeto[2], cepid[21];
   Item aux;
   int contLista=1;
-  float x, y;
+  double x, y;
   bool encontrado;
 
   fgets(tipoObjeto, 2, fqIn);
@@ -684,7 +684,7 @@ void qry_del(FILE *fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
       break;
   }
   if(encontrado){
-    fprintf(fqOutTxt, "OBJETO REMOVIDO\ncoordenadas: %f, %f\n\n", x, y);
+    fprintf(fqOutTxt, "OBJETO REMOVIDO\ncoordenadas: %lf, %lf\n\n", x, y);
   }
   else
     fprintf(fqOutTxt, "OBJETO NAO ENCONTRADO\n\n");
@@ -692,11 +692,11 @@ void qry_del(FILE *fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
 void qry_cbq(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
   Item aux;
   char cstrk[22], cep[50];
-  float x, y, r, xaux, yaux, w, h;
+  double x, y, r, xaux, yaux, w, h;
   int contLista=1;
 
-  fscanf(fqIn, "%f %f %f %s ", &x, &y, &r, cstrk);
-  fprintf(fqOutTxt, "cbq %f %f %f\n", x, y, r);
+  fscanf(fqIn, "%lf %lf %lf %s ", &x, &y, &r, cstrk);
+  fprintf(fqOutTxt, "cbq %lf %lf %lf\n", x, y, r);
 
   while(1){
     aux = getItem(listasObjetos[1], contLista);
@@ -718,7 +718,7 @@ void qry_cbq(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
 }
 void qry_crd(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
   Item aux;
-  float x, y;
+  double x, y;
   int contLista=1;
   char tipoObjeto[2], cepid[50];
   bool encontrado = false;
@@ -735,7 +735,7 @@ void qry_crd(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
           if(strcmp(quadraGetCep(aux), cepid)==0){
             x = quadraGetX(aux);
             y = quadraGetY(aux);
-            fprintf(fqOutTxt, "Quadra: %f %f\n\n", x, y);
+            fprintf(fqOutTxt, "Quadra: %lf %lf\n\n", x, y);
             encontrado = true;
             break;
           }
@@ -753,7 +753,7 @@ void qry_crd(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
           if(strcmp(hidranteGetId(aux), cepid)==0){
             x = hidranteGetX(aux);
             y = hidranteGetY(aux);
-            fprintf(fqOutTxt, "Hidrante: %f %f\n\n", x, y);
+            fprintf(fqOutTxt, "Hidrante: %lf %lf\n\n", x, y);
             encontrado = true;
             break;
           }
@@ -771,7 +771,7 @@ void qry_crd(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
           if(strcmp(semaforoGetId(aux), cepid)==0){
             x = semaforoGetX(aux);
             y = semaforoGetY(aux);
-            fprintf(fqOutTxt, "Semaforo: %f %f\n\n", x, y);
+            fprintf(fqOutTxt, "Semaforo: %lf %lf\n\n", x, y);
             encontrado = true;
             break;
           }
@@ -789,7 +789,7 @@ void qry_crd(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
           if(strcmp(torreGetId(aux), cepid)==0){
             x = torreGetX(aux);
             y = torreGetY(aux);
-            fprintf(fqOutTxt, "Torre de Radio: %f %f\n\n", x, y);
+            fprintf(fqOutTxt, "Torre de Radio: %lf %lf\n\n", x, y);
             encontrado = true;
             break;
           }
@@ -807,10 +807,10 @@ void qry_crd(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
 void qry_trns(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
   Item aux;
   int contLista=1;
-  float x, y, w, h, dx, dy, ax, ay, aw, ah;
+  double x, y, w, h, dx, dy, ax, ay, aw, ah;
 
-  fscanf(fqIn, "%f %f %f %f %f %f ", &x, &y, &w, &h, &dx, &dy);
-  fprintf(fqOutTxt, "trns %f %f %f %f %f %f\n", x, y, w, h, dx, dy);
+  fscanf(fqIn, "%lf %lf %lf %lf %lf %lf ", &x, &y, &w, &h, &dx, &dy);
+  fprintf(fqOutTxt, "trns %lf %lf %lf %lf %lf %lf\n", x, y, w, h, dx, dy);
   while(1){
     aux = getItem(listasObjetos[1], contLista);
     if(aux){
@@ -819,7 +819,7 @@ void qry_trns(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
       aw = quadraGetW(aux);
       ah = quadraGetH(aux);
       if(SqrTotalOverSqr(x, y, w, h, ax, ay, aw, ah)){
-        fprintf(fqOutTxt, "%s coord antigas: %f %f, novas: %f %f\n", quadraGetCep(aux), ax, ay, ax+dx, ay+dy);
+        fprintf(fqOutTxt, "%s coord antigas: %lf %lf, novas: %lf %lf\n", quadraGetCep(aux), ax, ay, ax+dx, ay+dy);
         quadraSetX(aux, ax+dx);
         quadraSetY(aux, ay+dy);
       }

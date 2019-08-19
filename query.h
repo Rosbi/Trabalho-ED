@@ -2,8 +2,8 @@
 #define QUERY_H
 #include"lista.h"
 
-float func_min(float a, float b);
-float func_max(float a, float b);
+double func_min(double a, double b);
+double func_max(double a, double b);
 
 void qry_start(char[], char[], char[], char[], char[], Lista[]);
 
