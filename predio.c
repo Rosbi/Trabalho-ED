@@ -45,20 +45,20 @@ ItemPredio predioNew(char cep[], char face, double num, double frente, double pr
       x = qx + margem;
     w = profundidade;
     h = frente;
-    return essa;
   }
 
   essa->cima = criarReta(criarPonto(x, y), criarPonto(x+w, y));
   essa->esquerda = criarReta(criarPonto(x, y), criarPonto(x, y+h));
   essa->direita = criarReta(criarPonto(x+w, y), criarPonto(x+w, y+h));
   essa->baixo = criarReta(criarPonto(x, y+h), criarPonto(x+w, y+h));
+  return essa;
 }
 
-void drawPredio(ItemPredio item, FILE* out){
+void predioDraw(ItemPredio item, FILE* out){
   struct predio *essa = item;
   double x, y, w, h;
   char num[10];
-  sprintf(num, "%lf", essa->num);
+  sprintf(num, "%d", (int)essa->num);
   x = getPontoX(getRetaA(essa->cima));
   y = getPontoY(getRetaA(essa->cima));
   w = getRetaTamanho(essa->cima);

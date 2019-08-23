@@ -8,7 +8,7 @@ typedef void* ItemPredio;
 
 ItemPredio predioNew(char* cep, char face, double num, double frente, double profundidade, double margem, ItemQuadra quadra, int* sizeofItem);
 
-void drawPredio(ItemPredio, FILE*);
+void predioDraw(ItemPredio, FILE*);
 
 Reta getPredioCima(ItemPredio);
 Reta getPredioEsquerda(ItemPredio);

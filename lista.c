@@ -46,15 +46,14 @@ void insertItem(Lista lis, void* infor, size_t tamanho){
         if(emptyList(li)){
           li->prim = livre;
           li->ult = livre;
-          //printf("oio");fflush(stdout);
         }
 
         li->elem[livre].info = calloc(1, tamanho);
         memcpy(li->elem[livre].info, infor, tamanho);
 
         li->elem[livre].prox = li->livre;
-        li->elem[livre].ant = li->ult;//printf("´´%d\n", li->elem[li->ult].prox);fflush(stdout);
-        li->elem[li->ult].prox = livre;//printf("``%p\n", li->elem[0].info);fflush(stdout);
+        li->elem[livre].ant = li->ult;
+        li->elem[li->ult].prox = livre;
         li->ult = livre;
     }
 }
@@ -107,14 +106,6 @@ int getLivre(Lista lis){
 
 bool fullList(Lista lis){
     struct ListaImplementada *li = lis;
-    /*//int index = li->prim;
-    int j;printf("++%d\n", li->prim);fflush(stdout);
-    for(j=0;j<li->max;j++){printf("--%d\n", j);fflush(stdout);
-        //index = li->elem[index].prox;
-        if(!li->elem[j].info){
-          break;
-        }
-    }*/
     if(li->livre == -1){
         return true;
     }
@@ -143,9 +134,9 @@ Item getItem(Lista lis, int i){
       }
 
     if(i <= li->max && index != NULO){
-        if(li->elem[index].info){
-            return li->elem[index].info;
-        }
+      if(li->elem[index].info){
+        return li->elem[index].info;
+      }
     }
     return NULL;
 }
