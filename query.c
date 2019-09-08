@@ -11,6 +11,14 @@
 #include"torre.h"
 #include"lista.h"
 #include"query.h"
+#include"geometria.h"
+#include"sort.h"
+#include"predio.h"
+
+struct toBeSorted{
+  char id[15];
+  double distancia;
+};
 
 double func_min(double a, double b){
   if(a>b)
@@ -78,7 +86,7 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char n
   char* querryIn = NULL;  //nome do arquivo de entrada de dados
   char* querryOut = NULL; //nome do arquivo de saída de dados
   char* tempName = NULL;  //string a ser manipulada pela função strtok
-  char qTipo[5];      //tipo de consulta a ser feita (o? i? d? bb)
+  char qTipo[5];      //tipo de consulta a ser feita (o? i? d? bb etc.)
   FILE* fQryIn;
   FILE* fQryOutSvg;
   FILE* fQryOutTxt;
@@ -101,34 +109,27 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char n
   if(strstr(nConsulta, "/")){
     tempName = nConsulta;
     nArqGeo = strtok(tempName, "/");
-    //nArqGeo = strtok(nConsulta, "/");
     while(nArqGeo!=NULL){
       strcpy(nConsulta, nArqGeo);
       nArqGeo = strtok(NULL, "/");
     }
     tempName = nConsulta;
     nConsulta = strtok(tempName, ".");
-    //strtok(nConsulta, ".");
   }
   else{
     tempName = nConsulta;
     nConsulta = strtok(tempName, ".");
-    //strtok(nConsulta, ".");
   }
-  querryOut = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+10));//printf("%s\n", nConsulta);fflush(stdout);//
+  querryOut = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+10));
   sprintf(querryOut, "%s/%s-%s.svg", dDir, tnArq, nConsulta);
   create_svg(querryOut);
   fQryOutSvg = fopen(querryOut, "a+");
   tempName = (char *)malloc(sizeof(char)*(strlen(dDir)+strlen(tnArq)+strlen(nConsulta)+10));
-  sprintf(tempName, "%s/%s-%s.txt", dDir, tnArq, nConsulta);//printf("%s\n", tempName);fflush(stdout);//
-  /*tempName = querryOut;
-  querryOut = strtok(tempName, ".");
-  //strtok(querryOut, ".");
-  sprintf(querryOut, "%s.txt", querryOut);*/
+  sprintf(tempName, "%s/%s-%s.txt", dDir, tnArq, nConsulta);
   fQryOutTxt = fopen(tempName, "w");
 
   while(!feof(fQryIn)){
-    fscanf(fQryIn, "%s ", qTipo);//printf("%s\n", qTipo);
+    fscanf(fQryIn, "%s ", qTipo);
     if(strcmp(qTipo, "bb")==0){
       qry_bb(dDir, listasObjetos, tnArq, nConsulta, fQryIn);
     }
@@ -155,6 +156,15 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char n
     }
     else if(strcmp(qTipo, "trns")==0){
       qry_trns(fQryOutTxt, fQryIn, listasObjetos);
+    }
+    else if(strcmp(qTipo, "brl")==0){
+      qry_brl(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos);
+    }
+    else if(strcmp(qTipo, "fi")==0){
+      qry_fi(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos);
+    }
+    else if(strcmp(qTipo, "fh")==0){
+      qry_fh(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos);
     }
   }
 
@@ -500,7 +510,7 @@ void qry_d(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listaCR){
     fprintf(fqOutTxt, "ELEMENTO J OU K NÃO ENCONTRADO\n\n");
   }
 }
-void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
+void qry_dq(FILE *fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){ //Tirar fqOutSvg
   Item aux;
   int contLista=1;
   double x, y, r, ax, ay, aw, ah;
@@ -829,3 +839,102 @@ void qry_trns(FILE* fqOutTxt, FILE* fqIn, Lista listasObjetos[]){
     contLista++;
   }
 }
+void qry_brl(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
+
+  double x, y;
+  fscanf(fqIn, "%lf %lf ", &x, &y);
+  printf("Trabalhando no brl...\n");
+
+} //Começar a fazer
+void qry_fi(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
+  double x, y, r;
+  int ns, ll = listaLength(listasObjetos[e_semaforos]);
+
+  fscanf(fqIn, "%lf %lf %d %lf ", &x, &y, &ns, &r);
+  struct toBeSorted semaf[ll];
+  Ponto xy = criarPonto(x, y);
+
+  for(int i=0;i<ll;i++){
+    ItemSemaforo sem = getItem(listasObjetos[e_semaforos], i+1);
+    Ponto pSem = criarPonto(semaforoGetX(sem), semaforoGetY(sem));
+
+    strcpy(semaf[i].id, semaforoGetId(sem));
+    semaf[i].distancia = distancia(xy, pSem);;
+  }
+
+  heapsort((void*)semaf, ll, '-');
+  fprintf(fqOutTxt, "\nfi\nSemaforos e hidrantes alterados:\n");
+
+  for(int i=0;i<ns;i++){
+    ItemSemaforo sem;
+    int j=1;
+    do{
+      j++;
+      sem = getItem(listasObjetos[e_semaforos], j);
+    }while(strcmp(semaforoGetId(sem), semaf[i].id)!=0 && j<listaLength(listasObjetos[e_semaforos]));
+
+    semaforoSetCorStrokeItem(sem, "black");
+    semaforoSetStrokeW(sem, 2.0);
+    fprintf(fqOutTxt, "%s\n", semaforoGetId(sem));
+    draw_l(getPontoX(xy), getPontoY(xy), semaforoGetX(sem), semaforoGetY(sem), "black", fqOutSvg);
+  }
+
+  for(int i=0;i<listaLength(listasObjetos[e_hidrantes]);i++){
+    ItemHidrante hid = getItem(listasObjetos[e_hidrantes], i+1);
+
+    if(distancia(xy, criarPonto(hidranteGetX(hid), hidranteGetY(hid))) < r){
+      hidranteSetCorStrokeItem(hid, "black");
+      hidranteSetStrokeW(hid, 2.0);
+
+      fprintf(fqOutTxt, "%s\n", hidranteGetId(hid));
+      draw_l(getPontoX(xy), getPontoY(xy), hidranteGetX(hid), hidranteGetY(hid), "black", fqOutSvg);
+    }
+  }
+}
+void qry_fh(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
+  char nearFar, face;
+  int k, ll = listaLength(listasObjetos[e_hidrantes]);
+  double num;
+  char cep[15];
+  Ponto xy;
+  struct toBeSorted hids[ll];
+
+  fscanf(fqIn, "%c%d %s %c %lf", &nearFar, &k, cep, &face, &num);
+  for(int i=0;i<listaLength(listasObjetos[e_predios]);i++){
+    ItemPredio pre = getItem(listasObjetos[e_predios], i+1);
+    if(getPredioNum(pre) == num){
+      if(getPredioFace(pre) == face){
+        if(strcmp(getPredioCep(pre), cep)==0){
+          xy = criarPonto(getPontoX(getRetaA(getPredioCima(pre))), getPontoY(getRetaA(getPredioCima(pre))));
+          break;
+        }
+      }
+    }
+    if(i+1 == listaLength(listasObjetos[e_predios])){
+      //printf("\nPredio %s %c %lf não encontrado\n", cep, face, num);
+      return;
+    }
+  }
+
+  fprintf(fqOutTxt, "\nfh\nHidrantes afetados:\n");
+  for(int i=0;i<ll;i++){
+    ItemHidrante hid = getItem(listasObjetos[e_hidrantes], i+1);
+    strcpy(hids[i].id, hidranteGetId(hid));
+    hids[i].distancia = distancia(xy, criarPonto(hidranteGetX(hid), hidranteGetY(hid)));
+  }
+  heapsort(hids, ll, nearFar);
+
+  for(int i=0;i<k;i++){
+    ItemHidrante hid;
+    int j=1;
+    do{
+      hid = getItem(listasObjetos[e_hidrantes], j);
+      j++;
+    }while(strcmp(hidranteGetId(hid), hids[i].id)!=0 && j<=listaLength(listasObjetos[e_hidrantes]));
+    hidranteSetStrokeW(hid, 2.0);
+    hidranteSetCorStrokeItem(hid, "black");
+    draw_l(getPontoX(xy), getPontoY(xy), hidranteGetX(hid), hidranteGetY(hid), "black", fqOutSvg);
+    fprintf(fqOutTxt, "%s\n", hidranteGetId(hid));
+  }
+}
+void qry_fs(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){}

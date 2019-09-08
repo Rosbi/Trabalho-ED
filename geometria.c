@@ -4,8 +4,6 @@
 #include<stdbool.h>
 #include"geometria.h"
 
-#define double_BAIXO 0.000001
-
 struct ponto{
     double x;
     double y;

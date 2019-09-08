@@ -1,7 +1,7 @@
 all: siguel
 
-siguel: main.o lista.o query.o svg.o formasBase.o hidrante.o quadra.o semaforo.o torre.o geometria.o predio.o muro.o
-	gcc -o siguel main.o formasBase.o lista.o query.o svg.o hidrante.o quadra.o semaforo.o torre.o geometria.o predio.o muro.o -lm
+siguel: main.o lista.o query.o svg.o formasBase.o hidrante.o quadra.o semaforo.o torre.o geometria.o predio.o muro.o sort.o
+	gcc -o siguel main.o formasBase.o lista.o query.o svg.o hidrante.o quadra.o semaforo.o torre.o geometria.o predio.o muro.o sort.o -lm
 
 main.o: main.c formasBase.h svg.h query.h
 	gcc -o main.o main.c -c -W -std=c99 -pedantic -fstack-protector-all
@@ -38,6 +38,9 @@ predio.o: predio.c predio.h
 
 muro.o: muro.c muro.h
 	gcc -o muro.o muro.c -c -W -std=c99 -pedantic -fstack-protector-all
+
+sort.o: sort.c sort.h
+	gcc -o sort.o sort.c -c -W -std=c99 -pedantic -fstack-protector-all
 
 clean:
 	rm -rf *.o *~ siguel

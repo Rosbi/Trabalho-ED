@@ -5,6 +5,10 @@
 
 typedef void* ItemTorre;
 
+/*  Esse TAD tem como base o hidante.h, para qualquer dúvida, consultar o mesmo
+//  Qaulquer função com aplicação diferente estará comentada aqui
+*/
+
 ItemTorre torreNew(char[], double, double, int*);
 
 void torreDraw(ItemTorre, FILE*);

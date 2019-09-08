@@ -26,7 +26,7 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
     exit(-1);
   }
 
-  fscanf(geo, "%s ", tipo);//////////////////////////////////
+  fscanf(geo, "%s ", tipo);
   if(strcmp(tipo, "nx") == 0){
     fscanf(geo, "%d", &listaMax[e_formas]);
     if(fgetc(geo) != '\n'){
@@ -35,52 +35,7 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
         fscanf(geo, "%d %d ", &listaMax[e_predios], &listaMax[e_muros]);
       }
     }
-  }/////////////////////////////////////
-  /*for(int i=0;i<6;i++){
-    long int atual = ftell(geo);
-    fscanf(geo, "%s ", tipo);
-    if(strcmp(tipo, "nx") == 0){
-      fscanf(geo, "%d", &listaMax[e_formas]);
-      if(fgetc(geo) != '\n'){
-        fscanf(geo, "%d %d %d %d", &listaMax[e_quadras], &listaMax[e_hidrantes], &listaMax[e_semaforos], &listaMax[e_torres]);
-        if(fgetc(geo) != '\n'){
-          fscanf(geo, "%d %d ", &listaMax[e_predios], &listaMax[e_muros]);
-        }
-      }
-    }
-    else if(strcmp(tipo, "cq") == 0){
-      fscanf(geo, "%s %s %lf ", cfill, cstroke, &sw);
-      quadraSetCorstroke(cstroke);
-      quadraSetCorfill(cfill);
-      quadraSetStroke(sw);
-    }
-    else if(strcmp(tipo, "ch") == 0){
-      fscanf(geo, "%s %s %lf ", cfill, cstroke, &sw);
-      hidranteSetCorstroke(cstroke);
-      hidranteSetCorfill(cfill);
-      hidranteSetStroke(sw);
-    }
-    else if(strcmp(tipo, "cr") == 0){
-      fscanf(geo, "%s %s %lf ", cfill, cstroke, &sw);
-      torreSetCorstroke(cstroke);
-      torreSetCorfill(cfill);
-      torreSetStroke(sw);
-    }
-    else if(strcmp(tipo, "cs") == 0){
-      fscanf(geo, "%s %s %lf ", cfill, cstroke, &sw);
-      semaforoSetCorstroke(cstroke);
-      semaforoSetCorfill(cfill);
-      semaforoSetStroke(sw);
-    }
-    else if(strcmp(tipo, "sw") == 0){
-      fscanf(geo, "%lf %lf ", &sw, &rw);
-      formaSetStroke(sw, rw);
-    }
-    else{
-      fseek(geo, atual, SEEK_SET);
-      break;
-    }
-  }*/
+  }
 
   for(int i=0;i<7;i++){
     listasObjetos[i] = createList(listaMax[i]);

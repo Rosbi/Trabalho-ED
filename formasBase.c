@@ -156,6 +156,8 @@ char* formaGetTexto(Forma form){
   struct formaBase *essa = form;
   if(essa->tipo == 't')
     return essa->text;
+  else
+    return NULL;
 }
 
 void draw_r(double w, double h, double x, double y, char cor1[], char cor2[], double stroke, double opacity, FILE* dir){

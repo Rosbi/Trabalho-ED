@@ -60,6 +60,10 @@ double hidranteGetY(ItemHidrante item){
   return essa->y;
 }
 
+void hidranteSetStrokeW(ItemHidrante item, double pW){
+  struct hidrante *essa = item;
+  essa->strkW = pW;
+}
 void hidranteSetID(ItemHidrante item, char pId[]){
   struct hidrante *essa = item;
   strcpy(essa->ID, pId);
@@ -71,4 +75,8 @@ void hidranteSetX(ItemHidrante item, double pX){
 void hidranteSetY(ItemHidrante item, double pY){
   struct hidrante *essa = item;
   essa->y = pY;
+}
+void hidranteSetCorStrokeItem(ItemHidrante item, char pCor[]){
+  struct hidrante *essa = item;
+  strcpy(essa->corStroke, pCor);
 }

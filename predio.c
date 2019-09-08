@@ -30,7 +30,7 @@ ItemPredio predioNew(char cep[], char face, double num, double frente, double pr
 
   if(face == 'N' || face == 'S'){
     x = qx + (num - (frente/2));
-    if(face == 'N')
+    if(face == 'S')
       y = qy + margem;
     else
       y = qy + qh - (margem + profundidade);
@@ -85,4 +85,12 @@ Reta getPredioBaixo(ItemPredio pp){
 char getPredioFace(ItemPredio pp){
   struct predio *essa = pp;
   return essa->face;
+}
+char* getPredioCep(ItemPredio pp){
+  struct predio *essa = pp;
+  return essa->cep;
+}
+double getPredioNum(ItemPredio pp){
+  struct predio *essa = pp;
+  return essa->num;
 }

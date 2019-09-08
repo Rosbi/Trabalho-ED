@@ -6,20 +6,35 @@ typedef void* Item;
 
 typedef void* Lista;
 
-Lista createList(int);
+/*  Todas as funções aqui tratam de listas e seu funcionamento
+//  Cada elemento da lista é independente do outro, e seu conteudo é irrelevante para esse .h
+*/
 
-void insertItem(Lista, void*, size_t);
+//  Retorna o endereço de tamanho max
+Lista createList(int max);
 
+//  Aloca m bytes para armazenar infor em lis
+void insertItem(Lista lis, void* infor, size_t m);
+
+//  NÃO IMPLEMENTADO
 void insertAfter(Lista, void*, size_t, int);
 
+//  NÃO IMPLEMENTADO
 void insertBefore(Lista, void*, size_t, int);
 
+//  Retorna true se a lista estiver cheia
 bool fullList(Lista);
 
+//  Retorna true se a lista estiver vazia
 bool emptyList(Lista);
 
-Item getItem(Lista, int);
+//  Retorna o i-ésimo item da lista lis
+Item getItem(Lista lis, int i);
 
-void removeItem(Lista, int);
+//  Remove o i-ésimo item da lista lis
+void removeItem(Lista lis, int i);
+
+//  Retorna a quatidade de itens na lista
+int listaLength(Lista);
 
 #endif

@@ -16,8 +16,8 @@ struct semaforo{
 static char cor1[22] = "magenta";
 static char cor2[22] = "green";
 static double stroke = 1.0;
-static double width = 10.0;
-static double height = 20.0;
+static double width = 5.0;
+static double height = 10.0;
 
 ItemSemaforo semaforoNew(char id[], double x, double y, int* sizeofItem){
   struct semaforo *essa = malloc(sizeof(struct semaforo));
@@ -72,4 +72,12 @@ void semaforoSetX(ItemSemaforo item, double pX){
 void semaforoSetY(ItemSemaforo item, double pY){
   struct semaforo *essa = item;
   essa->y = pY;
+}
+void semaforoSetStrokeW(ItemSemaforo item, double pW){
+  struct semaforo *essa = item;
+  essa->strkW = pW;
+}
+void semaforoSetCorStrokeItem(ItemSemaforo item, char* pCor){
+  struct semaforo *essa = item;
+  strcpy(essa->corStroke, pCor);
 }

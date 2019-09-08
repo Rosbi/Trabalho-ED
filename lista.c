@@ -140,3 +140,20 @@ Item getItem(Lista lis, int i){
     }
     return NULL;
 }
+
+int listaLength(Lista lis){
+  struct ListaImplementada *li = lis;
+  if(emptyList(li))
+    return 0;
+
+  if(fullList(li))
+    return li->max;
+
+  int i = li->prim;
+  int j = 0;
+  while(li->elem[i].info != NULL){
+    i = li->elem[i].prox;
+    j++;
+  }
+  return j;
+}
