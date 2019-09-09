@@ -44,6 +44,7 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
 
   while(!feof(geo)){
     fscanf(geo, "%s", tipo);
+    printf("%s\n", tipo);
     if(strcmp(tipo, "c")==0){
       fscanf(geo, "%d %lf %lf %lf %s %s ", &id, &r, &x, &y, cstroke, cfill);
       aux = circuloNew(id, x, y, r, cstroke, cfill, &sizeofItem);
@@ -85,16 +86,19 @@ void inicializarListas(char *nArqGeo, Lista listasObjetos[]){
       double num, f, p, mrg;
       fscanf(geo, "%s %c %lf %lf %lf %lf ", cep, &face, &num, &f, &p, &mrg);
 
-      for(int j=0;j<listaMax[e_quadras];j++){
-        cep2 = quadraGetCep(getItem(listasObjetos[e_quadras], j));
 
-        if(getItem(listasObjetos[e_quadras], j) == NULL)
-          break;
+        if(!fullList(listasObjetos[e_predios])){
+          for(int j=0;j<listaMax[e_quadras];j++){
+          cep2 = quadraGetCep(getItem(listasObjetos[e_quadras], j));
 
-        if(strcmp(cep, cep2)==0){
-          aux = predioNew(cep, face, num, f, p, mrg, getItem(listasObjetos[e_quadras], j), &sizeofItem);
-          insertItem(listasObjetos[e_predios], aux, sizeofItem);
-          break;
+          if(getItem(listasObjetos[e_quadras], j) == NULL)
+            break;
+
+          if(strcmp(cep, cep2)==0){
+            aux = predioNew(cep, face, num, f, p, mrg, getItem(listasObjetos[e_quadras], j), &sizeofItem);
+            insertItem(listasObjetos[e_predios], aux, sizeofItem);
+            break;
+          }
         }
       }
     }
