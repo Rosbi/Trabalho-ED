@@ -166,6 +166,9 @@ void qry_start(char tnArq[], char dDir[], char dPath[], char nConsulta[], char n
     else if(strcmp(qTipo, "fh")==0){
       qry_fh(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos);
     }
+    else if(strcmp(qTipo, "fs")==0){
+      qry_fs(fQryOutTxt, fQryOutSvg, fQryIn, listasObjetos);
+    }
   }
 
   draw_svg(listasObjetos, fQryOutSvg);
@@ -937,4 +940,48 @@ void qry_fh(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
     fprintf(fqOutTxt, "%s\n", hidranteGetId(hid));
   }
 }
-void qry_fs(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){}
+void qry_fs(FILE* fqOutTxt, FILE* fqOutSvg, FILE* fqIn, Lista listasObjetos[]){
+  char face;
+  int k, ll = listaLength(listasObjetos[e_semaforos]);
+  double num;
+  char cep[15];
+  Ponto xy;
+  struct toBeSorted semaf[ll];
+
+  fscanf(fqIn, "%d %s %c %lf", &k, cep, &face, &num);
+  for(int i=0;i<listaLength(listasObjetos[e_predios]);i++){
+    ItemPredio pre = getItem(listasObjetos[e_predios], i+1);
+    if(getPredioNum(pre) == num){
+      if(getPredioFace(pre) == face){
+        if(strcmp(getPredioCep(pre), cep)==0){
+          xy = criarPonto(getPontoX(getRetaA(getPredioCima(pre))), getPontoY(getRetaA(getPredioCima(pre))));
+          break;
+        }
+      }
+    }
+    if(i+1 == listaLength(listasObjetos[e_predios])){
+      return;
+    }
+  }
+
+  fprintf(fqOutTxt, "\nfs\nSemaforos afetados:\n");
+  for(int i=0;i<ll;i++){
+    ItemSemaforo hid = getItem(listasObjetos[e_semaforos], i+1);
+    strcpy(semaf[i].id, semaforoGetId(hid));
+    semaf[i].distancia = distancia(xy, criarPonto(semaforoGetX(hid), semaforoGetY(hid)));
+  }
+  heapsort(semaf, ll, '-');
+
+  for(int i=0;i<k;i++){
+    ItemHidrante sem;
+    int j=1;
+    do{
+      sem = getItem(listasObjetos[e_semaforos], j);
+      j++;
+    }while(strcmp(semaforoGetId(sem), semaf[i].id)!=0 && j<=listaLength(listasObjetos[e_semaforos]));
+    semaforoSetStrokeW(sem, 2.0);
+    semaforoSetCorStrokeItem(sem, "black");
+    draw_l(getPontoX(xy), getPontoY(xy), semaforoGetX(sem), semaforoGetY(sem), "black", fqOutSvg);
+    fprintf(fqOutTxt, "%s\n", semaforoGetId(sem));
+  }
+}
